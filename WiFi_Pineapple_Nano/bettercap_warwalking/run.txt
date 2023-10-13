@@ -1,0 +1,2 @@
+# To run bettercap
+gnu-nohup ./run.sh &> "/sd/LEET/bettercap_wardriving/bettercap.log" &
