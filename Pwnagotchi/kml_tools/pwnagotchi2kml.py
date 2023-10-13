@@ -17,9 +17,10 @@ from bs4 import BeautifulSoup
 
 # parse strange wifi names
 regex = r'(  )([a-z]|[A-Z]|\d*)([a-z]|[A-Z]|\d*)(;)'
+replacer = r'\\x\2\3'
 def parse_json(filepath):
 
-    print('[*] Parsing {}'.format(filepath))
+    print(f'[*] Parsing {filepath}')
 
     networks = None
     with open(filepath) as file:
@@ -33,7 +34,7 @@ def parse_json(filepath):
         
         essid_raw = essid_bssid_arr[0]
         essid_raw = escape(essid_raw)
-        essid = re.sub(regex, r'\\x\2\3', essid_raw)
+        essid = re.sub(regex, replacer, essid_raw)
         
         bssid_raw = essid_bssid_arr[1]
         bssid = (':'.join(bssid_raw[i:i+2] for i in range(0, len(bssid_raw), 2))).upper()
@@ -98,7 +99,7 @@ def generate_style(soup, id, icon_src):
 
     icon_style = soup.new_tag('IconStyle')
     icon_scale = soup.new_tag('scale')
-    icon_scale.string = '0.7'
+    icon_scale.string = '0.4'
     icon = soup.new_tag('Icon')
     href = soup.new_tag('href')
     href.string = icon_src
@@ -108,7 +109,7 @@ def generate_style(soup, id, icon_src):
 
     label_style = soup.new_tag('LabelStyle')
     label_scale = soup.new_tag('scale')
-    label_scale.string = '0.7'
+    label_scale.string = '0.6'
     label_style.append(label_scale)
 
     style.append(label_style)
@@ -159,8 +160,8 @@ def generate_klm(networks, out):
             f'MANUF:\n{n["manuf"]}\n\n'                                 # identified manufacturer of this item
             f'PACKE:\n{n["packets"]}\n\n'                               # estimative of how many packets was collected since last known update
             f'ENCRY:\n{" ".join(str(x) for x in n["encryption"])}\n\n'  # cipher used by that item
-            f'PASSW:\nEmpty\n\n'                                        # estimated shared password in this item
-            f'CLIEN:\nEmpty'                                            # clients connected at this item
+            f'PASSW:\~Empty~\n\n'                                       # estimated shared password in this item
+            f'CLIEN:\~Empty~'                                           # clients connected at this item
         )
 
         pt = soup.new_tag('Point')
