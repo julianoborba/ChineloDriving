@@ -27,7 +27,7 @@ def parse_placemark_node(node):
 
 def parse_kml(filepath):
 
-    print('[*] Parsing {}'.format(filepath))
+    print(f'[*] Parsing {filepath}')
 
     soup = None
     with open(filepath) as file:
@@ -70,7 +70,7 @@ def generate_style(soup, id, icon_src):
 
     icon_style = soup.new_tag('IconStyle')
     icon_scale = soup.new_tag('scale')
-    icon_scale.string = '0.7'
+    icon_scale.string = '0.4'
     icon = soup.new_tag('Icon')
     href = soup.new_tag('href')
     href.string = icon_src
@@ -80,7 +80,7 @@ def generate_style(soup, id, icon_src):
 
     label_style = soup.new_tag('LabelStyle')
     label_scale = soup.new_tag('scale')
-    label_scale.string = '0.7'
+    label_scale.string = '0.6'
     label_style.append(label_scale)
 
     style.append(label_style)
