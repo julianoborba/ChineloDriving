@@ -1,0 +1,5 @@
+# To execute the OUI update
+./airodump-ng-oui-update
+
+# To run airodump
+gnu-nohup ./run.sh &> "/sd/LEET/airodump_warwalking/airodump.log" &
