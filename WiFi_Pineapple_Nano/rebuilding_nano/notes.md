@@ -293,6 +293,10 @@ rm /tmp/wps.progress
 
 ## Kismet did not work for me, I'm taking notes
 
+* [https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/](https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/)
+
+* ChineloDriving uses airodump-ng for mapping only, and bettercap to captures if needed
+
 Taking notes
 ```
 touch manuf
@@ -348,7 +352,7 @@ kismet_server
 kismet_client
 ```
 
-## GPS for the Pineapple
+## Easy GPS for the Pineapple
 
 * (https://github.com/tiagoshibata/Android-GPSd-Forwarder)[https://github.com/tiagoshibata/Android-GPSd-Forwarder]
 
@@ -361,6 +365,12 @@ In GPSd Forwarder, set your Nano IP (172.16.42.1) and GPSd listenning port (1337
 Hit start
 
 Done here
+
+## The pwnagotchi.cap
+
+* [https://miloserdov.org/?p=3500](https://miloserdov.org/?p=3500)
+
+Let's build our own pwnagotchi-godzilla, mine is huge
 
 ## The Pineapple button script
 
