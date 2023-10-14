@@ -124,10 +124,10 @@ def generate_klm(networks, out):
     kml = soup.new_tag('kml', xmlns='http://www.opengis.net/kml/2.2')
     doc = soup.new_tag('Document')
 
-    #doc.append(generate_style(soup, 'standard', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'))
-    #doc.append(generate_style(soup, 'open', 'http://maps.google.com/mapfiles/kml/paddle/grn-stars.png'))
-    doc.append(generate_style(soup, 'standard', 'https://XXXXXXXXXXXXXXXX/closed.png'))
-    doc.append(generate_style(soup, 'open', 'https://XXXXXXXXXXXXXXXX/open.png'))
+    doc.append(generate_style(soup, 'standard', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'))
+    doc.append(generate_style(soup, 'open', 'http://maps.google.com/mapfiles/kml/paddle/grn-stars.png'))
+    #doc.append(generate_style(soup, 'standard', 'https://XXXXXXXXXXXXXXXX/closed.png'))
+    #doc.append(generate_style(soup, 'open', 'https://XXXXXXXXXXXXXXXX/open.png'))
     #doc.append(generate_style(soup, 'clear', 'https://XXXXXXXXXXXXXXXX/clear.png'))
     #doc.append(generate_style(soup, 'clients', 'https://XXXXXXXXXXXXXXXX/clients.png'))
 
