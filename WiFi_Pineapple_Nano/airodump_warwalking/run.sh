@@ -72,7 +72,7 @@ EOF
                 /bin/sleep 6s
                 #/sd/usr/bin/gpsctl -c 1
                 /bin/echo 'running airodump-ng...'
-                /usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band bg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 100 --output-format netxml --write-interval 5 wlan1mon > /dev/null 2>&1 &
+                /usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band abg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 100 --output-format netxml --write-interval 5 wlan2mon > /dev/null 2>&1 &
                 /bin/echo 'done running'
             fi
             COUNT=$((COUNT+STEP))
@@ -114,7 +114,7 @@ EOF
         /bin/sleep 6s
         #/sd/usr/bin/gpsctl -c 1
         /bin/echo 'running airodump-ng...'
-        /usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band bg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 100 --output-format netxml --write-interval 5 wlan1mon > /dev/null 2>&1 &
+        /usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band abg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 100 --output-format netxml --write-interval 5 wlan2mon > /dev/null 2>&1 &
         /bin/echo 'done running'
     fi
 done
