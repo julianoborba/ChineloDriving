@@ -113,8 +113,8 @@ nano /etc/rc.local
 /bin/sleep 25
 
 # /tmp/airmon-ng-wlan2.log
-# /bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan2 > /dev/null 2>&1 &
-# /bin/sleep 25
+/bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan2 > /dev/null 2>&1 &
+/bin/sleep 25
 
 # /tmp/airmon-ng-wlan3.log
 # /bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan3 > /dev/null 2>&1 &
@@ -134,7 +134,7 @@ nano /etc/rc.local
 /bin/sleep 10
 
 ## /tmp/airodump-ng-wlan1mon.log
-/usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band bg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 100 --output-format netxml --write-interval 5 wlan1mon > /dev/null 2>&1 &
+/usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band abg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 100 --output-format netxml --write-interval 5 wlan2mon > /dev/null 2>&1 &
 /bin/sleep 30
 
 # /tmp/airodump-run.log
