@@ -1,7 +1,7 @@
 #!/bin/bash
 while true; do
     echo "scanning with wash"
-    $(gnu-timeout 16 wash --2ghz -i wlan2mon --ignore-fcs > /tmp/wash-run-output.txt)
+    $(gnu-timeout 16 wash --2ghz --5ghz -i wlan2mon --ignore-fcs > /tmp/wash-run-output.txt)
     sleep 18s
     echo "done scanning"
     access_points=$(cat /tmp/wash-run-output.txt | tail -n +3 | tr -s ' ' | cut -f1 -d ' ')
