@@ -354,7 +354,7 @@ kismet_client
 
 ## Easy GPS for the Pineapple
 
-* (https://github.com/tiagoshibata/Android-GPSd-Forwarder)[https://github.com/tiagoshibata/Android-GPSd-Forwarder]
+* [https://github.com/tiagoshibata/Android-GPSd-Forwarder](https://github.com/tiagoshibata/Android-GPSd-Forwarder)
 
 Install GPSd Forwarder in Android, enable your GPS
 
