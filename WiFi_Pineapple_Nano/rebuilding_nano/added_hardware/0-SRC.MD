@@ -6,7 +6,7 @@
 * 1 USB pen drive, a nice one
 * 1 TP-LINK TL-WN722N v1 (Atheros/AR9271L) 2GHz wifi dongle (working great)
 * 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle (testing soon)
-* 1 20000mAh Lithium Polymer Power Bank
+* 1 20000mAh Lithium Polymer Power Bank (just enough)
   |Power Bank specs| |
   |---|---
   |Capacity|20000mAh
