@@ -166,8 +166,8 @@ def generate_klm(networks, out):
             f'MANUF:\n{n["manuf"]}\n\n'                                 # identified manufacturer of this item
             f'PACKE:\n{n["packets"]}\n\n'                               # estimative of how many packets was collected since last known update
             f'ENCRY:\n{" ".join(str(x) for x in n["encryption"])}\n\n'  # cipher used by that item
-            f'PASSW:\~Empty~\n\n'                                       # estimated shared password in this item
-            f'CLIEN:\~Empty~'                                           # clients connected at this item
+            f'PASSW:\n~Empty~\n\n'                                      # estimated shared password in this item
+            f'CLIEN:\n~Empty~'                                          # clients connected at this item
         )
 
         pt = soup.new_tag('Point')
