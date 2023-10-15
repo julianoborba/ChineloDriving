@@ -10,7 +10,7 @@ Enter 192.168.1.1 in browser incognito mode
 
 ## Rebuilding Pineapple Nano firmware
 
-* [https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md](https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md) by xchwarze
+* Complete document and important notes by xchwarze at [https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md](https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md)
 * [https://github.com/xchwarze/wifi-pineapple-cloner](https://github.com/xchwarze/wifi-pineapple-cloner)
 
 ```
