@@ -5,7 +5,9 @@ A project repository to store documented experimentation on warwalking subject a
 
 So it's like a wardriving, but with flip-flops - thus ChineloDriving.
 
-<img src='WiFi_Pineapple_Nano/rebuilding_nano/pineapple_on_flip_flops.jpg' width='200'>
+Pineapple on flip-flops | Pwnagotchi on flip-flops 
+--- | --- 
+<img src='WiFi_Pineapple_Nano/rebuilding_nano/pineapple_on_flip_flops.jpg' width='200'>|<img src='/Pwnagotchi/pwnagotchi_on_flip_flops.png' width='200'>
 
 ## Hey!
 
