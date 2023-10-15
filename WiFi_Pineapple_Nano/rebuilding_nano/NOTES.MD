@@ -10,6 +10,7 @@ Enter 192.168.1.1 in browser incognito mode
 
 ## Rebuilding Pineapple Nano firmware
 
+* [https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md](https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md) by xchwarze
 * [https://github.com/xchwarze/wifi-pineapple-cloner](https://github.com/xchwarze/wifi-pineapple-cloner)
 
 ```
@@ -367,6 +368,7 @@ Done here
 
 ## The pwnagotchi.cap
 
+* Automatic handshake and PMKID capture from all access points, posted on September 19, 2019 by Alex
 * [https://miloserdov.org/?p=3500](https://miloserdov.org/?p=3500)
 
 Let's build our own pwnagotchi-godzilla, mine is huge
