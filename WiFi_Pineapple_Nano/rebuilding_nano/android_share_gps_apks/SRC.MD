@@ -9,4 +9,4 @@
 * https://github.com/tiagoshibata/Android-GPSd-Forwarder
 * https://play.google.com/store/apps/details?id=io.github.tiagoshibata.gpsdclient
 * https://f-droid.org/packages/io.github.tiagoshibata.gpsdclient/
-* 570480445022e3019c571bfe7bae339e8e7836b00434ffde9d13a0490579169f  GPSd_Forwarder.apk
+* 570480445022e3019c571bfe7bae339e8e7836b00434ffde9d13a0490579169f  GPSd_Forwarder.apk (Nov 15, 2019 - 1.0.4 release)
