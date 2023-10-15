@@ -110,7 +110,7 @@ rm -rf /tmp/handshakes/
 ln -s /sd/LEET/handshakes /tmp/
 ```
 
-Make sure to install GPSd, Aircrack suite and Bettercap suite.
+Make sure to install GPSd, Aircrack suite, Bettercap suite, Kismet and Reaver suite.
 
 ```
 rm /etc/aircrack-ng/oui.txt
