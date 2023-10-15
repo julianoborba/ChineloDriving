@@ -296,8 +296,6 @@ rm /tmp/wps.progress
 * Wardriving with WIFI Pineapple Nano in Mobile World Congress 2016 at Barcelona, posted on 2016/02/27 by Roger Carhuatocto
 * [https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/](https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/)
 
-* ChineloDriving uses airodump-ng for mapping only, and bettercap to captures if needed
-
 Taking notes
 ```
 touch manuf
