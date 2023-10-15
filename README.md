@@ -9,4 +9,4 @@ So it's like a wardriving, but with flip-flops - thus ChineloDriving.
 
 ## Hey!
 
-That repository is just a notepad, and nothing more. Notepads can only be read or write on. I can't be responsible for your use of notepads beyond it very purpose: taking notes.
+That repository is just a notepad, and nothing more. Notepads can only be read or write on. I can't be responsible for your use of notepads beyond it's very purpose: taking notes.
