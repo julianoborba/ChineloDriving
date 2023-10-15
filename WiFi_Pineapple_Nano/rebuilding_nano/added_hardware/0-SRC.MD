@@ -2,6 +2,8 @@
 
 > Like a cake receipt
 
+* 1 pair of flip-flops
+* 1 stylish shoulder bag for man (I mean, if we get to be specific, but can be just a cool bag)
 * 1 USB HUB, with external power preferred
 * 1 USB pen drive, a nice one
 * 1 TP-LINK TL-WN722N v1 (Atheros/AR9271L) 2GHz wifi dongle with 5dBi antenna (working great)
