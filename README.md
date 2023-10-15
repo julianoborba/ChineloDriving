@@ -7,7 +7,7 @@ So it's like a wardriving, but with flip-flops - thus ChineloDriving.
 
 Pineapple on flip-flops | Pwnagotchi on flip-flops 
 --- | --- 
-<img src='WiFi_Pineapple_Nano/rebuilding_nano/pineapple_on_flip_flops.jpg' width='300'>|<img src='/Pwnagotchi/pwnagotchi_on_flip_flops.png' width='300'>
+<img src='WiFi_Pineapple_Nano/rebuilding_nano/pineapple_on_flip_flops.jpg' width='300'>|<img src='/Pwnagotchi/pwnagotchi_on_flip_flops.png' width='470'>
 
 ## Hey!
 
