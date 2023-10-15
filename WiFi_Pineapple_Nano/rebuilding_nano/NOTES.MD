@@ -1,4 +1,4 @@
-## Pineapple Nano recovery mode
+## Put Pineapple Nano in recovery mode
 
 * [https://docs.hak5.org/wifi-pineapple-6th-gen-nano-tetra/faq-troubleshooting/firmware-recovery](https://docs.hak5.org/wifi-pineapple-6th-gen-nano-tetra/faq-troubleshooting/firmware-recovery)
 
@@ -6,18 +6,20 @@
 sudo ifconfig YOUR_PINE_ETH 192.168.1.2 netmask 255.255.255.0 up
 ```
 
-Enter 192.168.1.1 in browser incognito mode
+Enter 192.168.1.1 in browser incognito mode.
 
-## Rebuilding Pineapple Nano firmware
+## Rebuilding Pineapple Nano firmware, with Pineapple Termidor
 
 * Complete document and important notes by xchwarze at [https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md](https://github.com/xchwarze/wifi-pineapple-cloner/blob/master/build.md)
 * [https://github.com/xchwarze/wifi-pineapple-cloner](https://github.com/xchwarze/wifi-pineapple-cloner)
+
+The commands below are self explanatory. Follow the order.
 
 ```
 sudo apt install binwalk
 ```
 
-Install sasquatch to extract non-standard SquashFS images
+Install sasquatch to extract non-standard SquashFS images.
 
 ```
 sudo apt-get install zlib1g-dev liblzma-dev liblzo2-dev
@@ -25,13 +27,17 @@ git clone https://github.com/devttys0/sasquatch
 (cd sasquatch && ./build.sh)
 ```
 
-From inside the sasquatch directory
+From inside the sasquatch directory apply the fix for sasquatch (I had problems in Linux Mint at first).
 
 ```
 wget https://raw.githubusercontent.com/devttys0/sasquatch/82da12efe97a37ddcd33dba53933bc96db4d7c69/patches/patch0.txt
 mv patch0.txt patches
 ./build.sh
 ```
+
+The steps below are from Pineapple Termidor documentation.
+
+You can build your own Wifi Pineapple with other hardware, but here I'm rebuilding the Nano itself.
 
 ```
 sudo apt install php-cli
@@ -59,6 +65,8 @@ chmod +x tools/fs-patcher.sh
 tools/fs-patcher.sh mips nano rootfs
 ```
 
+Download de oficial imagebuilder from OpenWRT.
+
 * [https://downloads.openwrt.org/releases/19.07.9/targets/ar71xx/generic/](https://downloads.openwrt.org/releases/19.07.9/targets/ar71xx/generic/)
 
 ```
@@ -75,17 +83,23 @@ make image PROFILE=wifi-pineapple-nano PACKAGES="at autossh base-files block-mou
 cp bin/targets/ar71xx/generic/openwrt-19.07.9-ar71xx-generic-wifi-pineapple-nano-squashfs-sysupgrade.bin ../wifi-pineapple-nano.bin
 ```
 
-Reset Pineapple Nano by flashing the oficial recovery image
+Now you have the custom firmware.
 
-Flash the oficial OpenWRT 19.07.9 for Pineapple Nano
+Reset Pineapple Nano by flashing the oficial recovery image first.
 
-In LuCi interface from OpenWRT fresh install, upgrade the firmware with your custom build, check the option to erase any previous data
+* [https://downloads.hak5.org/api/devices/wifipineapplenano/firmwares/recovery](https://downloads.hak5.org/api/devices/wifipineapplenano/firmwares/recovery)
 
-Wait...
+Flash the oficial OpenWRT 19.07.9 for Pineapple Nano after.
 
-## After up and running
+* [https://downloads.openwrt.org/releases/19.07.9/targets/ar71xx/generic/openwrt-19.07.9-ar71xx-generic-wifi-pineapple-nano-squashfs-sysupgrade.bin](https://downloads.openwrt.org/releases/19.07.9/targets/ar71xx/generic/openwrt-19.07.9-ar71xx-generic-wifi-pineapple-nano-squashfs-sysupgrade.bin)
 
-Run at Nano's shell
+In LuCi interface from OpenWRT fresh install, upgrade the firmware with your custom one, check the option to erase any previous data.
+
+And wait... You can do this how many times you feel you want to.
+
+## After get the rebuild up and running
+
+Enter Nano's shell by ssh an run the commands below.
 
 ```
 ln -s /lib/libubus.so.20210603 /lib/libubus.so
@@ -95,6 +109,8 @@ ln -s /lib/libubus.so.20210603 /lib/libubus.so
 rm -rf /tmp/handshakes/
 ln -s /sd/LEET/handshakes /tmp/
 ```
+
+Make sure to install GPSd, Aircrack suite and Bettercap suite.
 
 ```
 rm /etc/aircrack-ng/oui.txt
@@ -131,17 +147,17 @@ nano /etc/rc.local
 /bin/sleep 10
 
 ## /tmp/bettercap-wlan1mon-pwnagotchi.log
-/sd/usr/bin/bettercap -no-history -iface wlan1mon -caplet /sd/LEET/bettercap_wardriving/pwnagotchi.cap > /dev/null 2>&1 &
-/bin/sleep 10
+# /sd/usr/bin/bettercap -no-history -iface wlan1mon -caplet /sd/LEET/bettercap_wardriving/pwnagotchi.cap > /dev/null 2>&1 &
+# /bin/sleep 10
 
 ## /tmp/airodump-ng-wlan2mon.log
-/usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band abg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 250 --output-format netxml --write-interval 5 wlan2mon > /dev/null 2>&1 &
-/bin/sleep 30
+# /usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band abg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 250 --output-format netxml --write-interval 5 wlan2mon > /dev/null 2>&1 &
+# /bin/sleep 30
 
 /bin/echo '' > /tmp/button.log 2>&1 &
 
 # /tmp/airodump-run.log
-/sd/LEET/airodump_wardriving/run.sh > /dev/null 2>&1 &
+# /sd/LEET/airodump_wardriving/run.sh > /dev/null 2>&1 &
 
 # Enter commands above this line
 exit 0
@@ -161,31 +177,28 @@ nano /etc/init.d/boot
         ## CUSTOM ##
 ```
 
-Just a reminder that this exists
+Just a reminder that this exists, take a look.
 ```
 nano /etc/rc.d/S99pineapd
 ```
 
+Just a reminder that this exists, take a look.
 ```
 nano /etc/config/system
-```
-/etc/config/system content
-```
-    'America/Sao Paulo  BRT3BRST,M10.3.0/0,M2.3.0/0'
 ```
 
 ## A reminder to don't use SDCARD with Pineapple Nano
 
-* SWAP is 61,0352 MiB
-* Don't use SDCARD, use a USB HUB with pendrive instead
+* SWAP is 61,0352 MiB;
+* Don't use SDCARD, use a USB HUB with pendrive instead. Leave a swap partition of same size as Nano.
 
-Taking notes
+Just a reminder that this exists, take a look.
 ```
 opkg update && opkg install --dest sd blkid
 blkid | grep /dev/sd
 ```
 
-Taking notes
+Just a reminder that this exists, take a look.
 ```
 nano /etc/fstab
 ```
@@ -196,17 +209,17 @@ UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX /dev/sda1 ext4 errors=remount-ro 0 1
 UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX /dev/sda2 swap sw 0 0
 ```
 
-Taking notes
+Just a reminder that this exists, take a look.
 ```
 fstab config
 ```
 
-Taking notes
+Just a reminder that this exists, take a look.
 ```
 block detect | uci import fstab
 ```
 
-Taking notes, this works fine
+Just a reminder that this exists, take a look. This works nice.
 ```
 config global
 	option	anon_swap	'0'
@@ -230,7 +243,7 @@ config swap
 	option	enabled	'0'
 ```
 
-Just a reminder that this exists
+Just a reminder that this exists, take a look.
 ```
 /etc/rc.d/S99wpc-tools
 wpc-tools 
@@ -246,20 +259,17 @@ Available commands:
     handle_lost_phys     Fix unrecognized wifi interfaces
 ```
 
-Taking notes
+Just a reminder that this exists, take a look
 ```
 cat /etc/modules.d/35-usb-ehci 
 ehci-hcd
 ```
 
-Taking notes
+A reminder to deal with USB stuff, if needed.
+
+* [https://openwrt.org/docs/guide-user/storage/usb-installing](https://openwrt.org/docs/guide-user/storage/usb-installing)
+
 ```
-https://github.com/raspberrypi/linux/issues/4597
-
-"scsi host0: usb-storage 1-1.2:1.0"
-
-https://openwrt.org/docs/guide-user/storage/usb-installing
-
 opkg list-installed | grep usb
 
 opkg remove kmod-usb-uhci
@@ -273,12 +283,10 @@ opkg install kmod-usb3
 opkg install kmod-usb-storage-uas
 ```
 
-## The wps module is nice, but I'm taking notes
+## I had to install WPS modules from community manually
 
-Taking notes
 ```
 touch /tmp/wps.progress
-
 opkg update
 ln -s /sd/modules/wps /pineapple/modules/
 opkg --dest sd install reaver bully pixiewps libpcap
@@ -287,19 +295,16 @@ mv wps.sh /sd/modules/wps/scripts/wps.sh
 chmod +x /sd/modules/wps/scripts/wps.sh
 touch /etc/config/wps
 echo "config wps 'module'" > /etc/config/wps
-
 uci set wps.module.installed=1
 uci commit wps.module.installed
-
 rm /tmp/wps.progress
 ```
 
-## Kismet did not work for me, I'm taking notes
+## Kismet did not work for me, APs don't show up, but this is usefull
 
 * Wardriving with WIFI Pineapple Nano in Mobile World Congress 2016 at Barcelona, posted on 2016/02/27 by Roger Carhuatocto
 * [https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/](https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/)
 
-Taking notes
 ```
 touch manuf
 python3 make-manuf.py
@@ -358,22 +363,20 @@ kismet_client
 
 * [https://github.com/tiagoshibata/Android-GPSd-Forwarder](https://github.com/tiagoshibata/Android-GPSd-Forwarder)
 
-Install GPSd Forwarder in Android, enable your GPS
+Install GPSd Forwarder in Android, enable your GPS.
 
-Connect to your Nano with management AP
+Connect to your Nano with management AP.
 
-In GPSd Forwarder, set your Nano IP (172.16.42.1) and GPSd listenning port (1337)
+In GPSd Forwarder, set your Nano IP (172.16.42.1) and GPSd listenning port (1337).
 
-Hit start
-
-Done here
+Hit start. Done here.
 
 ## The pwnagotchi.cap
 
 * Automatic handshake and PMKID capture from all access points, posted on September 19, 2019 by Alex
 * [https://miloserdov.org/?p=3500](https://miloserdov.org/?p=3500)
 
-Let's build our own pwnagotchi-godzilla, mine is huge
+Let's build our own pwnagotchi-godzilla, mine is huge.
 
 ## The Pineapple button script
 
@@ -387,10 +390,10 @@ Let's build our own pwnagotchi-godzilla, mine is huge
 /usr/bin/killall gpsd
 
 /usr/sbin/airmon-ng stop wlan1mon
-#/usr/sbin/airmon-ng stop wlan2mon
+/usr/sbin/airmon-ng stop wlan2mon
 #/usr/sbin/airmon-ng stop wlan3mon
 
-/bin/chmod -x /etc/rc.d/S99pineapd
+#/bin/chmod -x /etc/rc.d/S99pineapd
 #/bin/chmod +x /etc/rc.d/S99pineapd
 #/etc/rc.d/S99pineapd start > /tmp/pineapd-stop.log 2>&1 &
 #/etc/rc.d/S99pineapd stop > /tmp/pineapd-stop.log 2>&1 &
