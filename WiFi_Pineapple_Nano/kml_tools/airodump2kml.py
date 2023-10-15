@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 
 # parse strange wifi names
 regex = r'(  )([a-z]|[A-Z]|\d*)([a-z]|[A-Z]|\d*)(;)'
+compiler = re.compile(regex, re.I | re.S)
 replacer = r'\\x\2\3'
 def parse_network_node(node):
 
@@ -31,7 +32,7 @@ def parse_network_node(node):
 
     try:
         essid_raw = escape(essid_raw)
-        essid = re.sub(regex, replacer, essid_raw)
+        essid = compiler.sub(replacer, essid_raw)
     except:
         essid = '~Empty~'
     
@@ -57,9 +58,8 @@ def parse_network_node(node):
     for c in node.find_all('wireless-client', {'type': 'established'}):
         client_mac = c.find('client-mac').string
 
-        client_manuf_raw = c.find('client-manuf').string
-        client_manuf_raw = escape(client_manuf_raw)
-        client_manuf_raw = re.sub(regex, replacer, client_manuf_raw)
+        client_manuf_raw = escape(c.find('client-manuf').string)
+        client_manuf_raw = compiler.sub(replacer, client_manuf_raw)
         client_manuf = client_manuf_raw if 'Unknown' not in client_manuf_raw else 'unknown manufacturer'
 
         min_signal_raw = int(c.find('min_signal_dbm').string)
@@ -107,7 +107,7 @@ def parse_netxml(filepath):
     print(f'[*] Parsing {filepath}')
 
     soup = None
-    with open(filepath) as file:
+    with open(filepath, encoding='latin-1') as file:
         soup = BeautifulSoup(file, 'lxml')
 
     networks = [parse_network_node(n) for n in soup.find_all(
@@ -159,7 +159,10 @@ def generate_style(soup, id, icon_src):
     label_style = soup.new_tag('LabelStyle')
     label_scale = soup.new_tag('scale')
     label_scale.string = '0.6'
+    label_color = soup.new_tag('color')
+    label_color.string = 'ff5ac3ff'
     label_style.append(label_scale)
+    label_style.append(label_color)
 
     style.append(label_style)
     style.append(icon_style)
@@ -175,10 +178,10 @@ def generate_klm(networks, out):
 
     # doc.append(generate_style(soup, 'standard', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'))
     # doc.append(generate_style(soup, 'open', 'http://maps.google.com/mapfiles/kml/paddle/grn-stars.png'))
-    doc.append(generate_style(soup, 'standard', 'https://XXXXXXXXXXXXXXXX/closed.png'))
-    doc.append(generate_style(soup, 'open', 'https://XXXXXXXXXXXXXXXX/open.png'))
-    doc.append(generate_style(soup, 'clear', 'https://XXXXXXXXXXXXXXXX/clear.png'))
-    doc.append(generate_style(soup, 'clients', 'https://XXXXXXXXXXXXXXXX/clients.png'))
+    doc.append(generate_style(soup, 'standard', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/closed.png'))
+    doc.append(generate_style(soup, 'open', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/open.png'))
+    doc.append(generate_style(soup, 'clear', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/clear.png'))
+    doc.append(generate_style(soup, 'clients', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/clients.png'))
 
     for k, n in networks.items():
         if int(n['packets']) <= 0:
