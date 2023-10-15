@@ -3,6 +3,7 @@
 # # #
 # Refers to
 # https://github.com/dreadnought
+# Patrick Salecker <mail@salecker.org>
 # https://www.salecker.org/software/netxml2kml.html
 # # #
 
