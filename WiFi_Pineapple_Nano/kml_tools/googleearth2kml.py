@@ -30,7 +30,7 @@ def parse_kml(filepath):
     print(f'[*] Parsing {filepath}')
 
     soup = None
-    with open(filepath) as file:
+    with open(filepath, encoding='latin-1') as file:
         soup = BeautifulSoup(file, 'lxml')
 
     placemarks = [parse_placemark_node(p) for p in soup.find_all('placemark')]
@@ -81,7 +81,10 @@ def generate_style(soup, id, icon_src):
     label_style = soup.new_tag('LabelStyle')
     label_scale = soup.new_tag('scale')
     label_scale.string = '0.6'
+    label_color = soup.new_tag('color')
+    label_color.string = 'ff5ac3ff'
     label_style.append(label_scale)
+    label_style.append(label_color)
 
     style.append(label_style)
     style.append(icon_style)
@@ -97,10 +100,10 @@ def generate_klm(placemarks, out):
 
     # doc.append(generate_style(soup, 'standard', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'))
     # doc.append(generate_style(soup, 'open', 'http://maps.google.com/mapfiles/kml/paddle/grn-stars.png'))
-    doc.append(generate_style(soup, 'standard', 'https://XXXXXXXXXXXXXXXX/closed.png'))
-    doc.append(generate_style(soup, 'open', 'https://XXXXXXXXXXXXXXXX/open.png'))
-    doc.append(generate_style(soup, 'clear', 'https://XXXXXXXXXXXXXXXX/clear.png'))
-    doc.append(generate_style(soup, 'clients', 'https://XXXXXXXXXXXXXXXX/clients.png'))
+    doc.append(generate_style(soup, 'standard', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/closed.png'))
+    doc.append(generate_style(soup, 'open', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/open.png'))
+    doc.append(generate_style(soup, 'clear', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/clear.png'))
+    doc.append(generate_style(soup, 'clients', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/clients.png'))
 
     for k, p in placemarks.items():
         pm = soup.new_tag('Placemark')
