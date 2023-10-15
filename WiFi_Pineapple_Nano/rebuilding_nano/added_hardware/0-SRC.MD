@@ -4,9 +4,9 @@
 
 * 1 USB HUB, with external power preferred
 * 1 USB pen drive, a nice one
-* 1 TP-LINK TL-WN722N v1 (Atheros/AR9271L) 2GHz wifi dongle (working great)
-* 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle (testing soon)
-* 1 20000mAh Lithium Polymer Power Bank (just enough)
+* 1 TP-LINK TL-WN722N v1 (Atheros/AR9271L) 2GHz wifi dongle with 5dBi antenna (working great)
+* 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle with 5dBi antenna (testing soon)
+* 1 20000mAh Lithium Polymer Power Bank (PINENG PN-932, just enough)
   |Power Bank specs| |
   |---|---
   |Capacity|20000mAh
@@ -18,8 +18,6 @@
   |Working Temperature|-10°C to 45°C
   |Standby Times|10000 Hours
   |Cycle Life Of Charging|500 Times (1 time = from 0% to 100%)
-  |Indicator Light|Yes
-  |Launched Date|2020/11
 
 Good to know:
 * [https://deviwiki.com/wiki/List_of_Wireless_Adapters_That_Support_Monitor_Mode_and_Packet_Injection](https://deviwiki.com/wiki/List_of_Wireless_Adapters_That_Support_Monitor_Mode_and_Packet_Injection)
