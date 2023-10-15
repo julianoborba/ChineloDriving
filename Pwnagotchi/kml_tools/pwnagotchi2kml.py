@@ -19,8 +19,6 @@ from bs4 import BeautifulSoup
 regex = r'(  )([a-z]|[A-Z]|\d*)([a-z]|[A-Z]|\d*)(;)'
 compiler = re.compile(regex, re.I | re.S)
 replacer = r'\\x\2\3'
-
-
 def parse_json(filepath):
 
     print(f'[*] Parsing {filepath}')
