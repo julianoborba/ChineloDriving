@@ -17,13 +17,16 @@ from bs4 import BeautifulSoup
 
 # parse strange wifi names
 regex = r'(  )([a-z]|[A-Z]|\d*)([a-z]|[A-Z]|\d*)(;)'
+compiler = re.compile(regex, re.I | re.S)
 replacer = r'\\x\2\3'
+
+
 def parse_json(filepath):
 
     print(f'[*] Parsing {filepath}')
 
     networks = None
-    with open(filepath) as file:
+    with open(filepath, encoding='latin-1') as file:
         json_data = loads(file.read())
 
         file_basename = os.path.basename(filepath)
@@ -34,7 +37,7 @@ def parse_json(filepath):
         
         essid_raw = essid_bssid_arr[0]
         essid_raw = escape(essid_raw)
-        essid = re.sub(regex, replacer, essid_raw)
+        essid = compiler.sub(replacer, essid_raw)
         
         bssid_raw = essid_bssid_arr[1]
         bssid = (':'.join(bssid_raw[i:i+2] for i in range(0, len(bssid_raw), 2))).upper()
@@ -110,7 +113,10 @@ def generate_style(soup, id, icon_src):
     label_style = soup.new_tag('LabelStyle')
     label_scale = soup.new_tag('scale')
     label_scale.string = '0.6'
+    label_color = soup.new_tag('color')
+    label_color.string = 'ff5ac3ff'
     label_style.append(label_scale)
+    label_style.append(label_color)
 
     style.append(label_style)
     style.append(icon_style)
@@ -124,12 +130,12 @@ def generate_klm(networks, out):
     kml = soup.new_tag('kml', xmlns='http://www.opengis.net/kml/2.2')
     doc = soup.new_tag('Document')
 
-    doc.append(generate_style(soup, 'standard', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'))
-    doc.append(generate_style(soup, 'open', 'http://maps.google.com/mapfiles/kml/paddle/grn-stars.png'))
-    #doc.append(generate_style(soup, 'standard', 'https://XXXXXXXXXXXXXXXX/closed.png'))
-    #doc.append(generate_style(soup, 'open', 'https://XXXXXXXXXXXXXXXX/open.png'))
-    #doc.append(generate_style(soup, 'clear', 'https://XXXXXXXXXXXXXXXX/clear.png'))
-    #doc.append(generate_style(soup, 'clients', 'https://XXXXXXXXXXXXXXXX/clients.png'))
+    #doc.append(generate_style(soup, 'standard', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'))
+    #doc.append(generate_style(soup, 'open', 'http://maps.google.com/mapfiles/kml/paddle/grn-stars.png'))
+    doc.append(generate_style(soup, 'standard', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/closed.png'))
+    doc.append(generate_style(soup, 'open', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/open.png'))
+    doc.append(generate_style(soup, 'clear', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/clear.png'))
+    doc.append(generate_style(soup, 'clients', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/clients.png'))
 
     for k, n in networks.items():
         if int(n['packets']) <= 0:
