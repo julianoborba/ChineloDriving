@@ -9,7 +9,7 @@ CURL=`which curl 2>/dev/null`
 WGET=`which wget 2>/dev/null`
 OUI_DOWNLOAD_URL="https://standards-oui.ieee.org/oui/oui.txt"
 
-OUI_PATH0="/sd/LEET/aircrack-ng"
+OUI_PATH0="/sd/LEET/airodump_warwalking"
 #OUI_PATH1="/usr/local/etc/aircrack-ng"
 #OUI_PATH2="/usr/share/aircrack-ng"
 if [ -d "$OUI_PATH0" ]; then
