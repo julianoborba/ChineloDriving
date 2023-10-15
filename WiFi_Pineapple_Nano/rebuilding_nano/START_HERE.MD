@@ -99,6 +99,8 @@ And wait... You can do this how many times you feel you want to.
 
 ## After get the rebuild up and running
 
+* Use WiFi Pineapple Connector for Linux [https://github.com/hak5darren/wp6](https://github.com/hak5darren/wp6)
+
 Enter Nano's shell by ssh an run the commands below.
 
 ```
