@@ -12,8 +12,8 @@
 wpver=6.5.1
 spineapplenmask=255.255.255.0
 spineapplenet=172.16.42.0/24
-spineapplelan=enx00c0ca8ddebe
-spineapplewan=wlp2s0
+spineapplelan=YOUR_IF
+spineapplewan=YOUR_WAN
 spineapplegw=192.168.1.1
 spineapplehostip=172.16.42.42
 spineappleip=172.16.42.1
