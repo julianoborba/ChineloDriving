@@ -1,6 +1,6 @@
 var accessPoint = {};
 
-function exportEvent(data, isNewClientEvent) {
+function exportEvent(data, newClient) {
 
     var gps = session.GPS;
     if (gps.Latitude === 0 || gps.Longitude === 0) {
@@ -15,7 +15,7 @@ function exportEvent(data, isNewClientEvent) {
         };
     }
 
-    if (!isNewClientEvent) {
+    if (!newClient) {
         accessPoint[data.mac].seen++;
     }
     accessPoint[data.mac].lastSeen = data.last_seen;
@@ -38,7 +38,7 @@ function exportEvent(data, isNewClientEvent) {
 
     var pHostname = data.hostname.replace(/[/\\?%7*:|"<>._ ]/g, '');
     var pMac = data.mac.replace(/:/g, '');
-    var path = '/sd/LEET/handshakes/bettercap_gps_json' + pHostname + '_' + pMac + '.gps.json';
+    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + pHostname + '_' + pMac + '.gps.json';
 
     writeFile(path, JSON.stringify(capture));
 
