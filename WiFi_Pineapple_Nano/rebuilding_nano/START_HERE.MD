@@ -127,6 +127,13 @@ nano /etc/rc.local
 ```
 /bin/sleep 25
 
+# /tmp/uci-set-wireless-country.log
+# /sbin/uci set wireless.radio0.country=BR > /dev/null 2>&1 &
+# /sbin/uci set wireless.radio1.country=BR > /dev/null 2>&1 &
+# /sbin/uci set wireless.radio2.country=BR > /dev/null 2>&1 &
+# /sbin/uci commit wireless > /dev/null 2>&1 &
+# /bin/sleep 10
+
 # /tmp/airmon-ng-wlan1.log
 /bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan1 > /dev/null 2>&1 &
 /bin/sleep 25
@@ -142,18 +149,18 @@ nano /etc/rc.local
 ## /tmp/run-ntpd.log
 /usr/sbin/ntpd > /dev/null 2>&1 &
 /bin/sleep 10
-/sbin/uci set system.@system[0].timezone='BRT3BRST,M10.3.0/0,M2.3.0/0' > /dev/null 2>&1 &
+# /sbin/uci set system.@system[0].timezone='BRT3BRST,M10.3.0/0,M2.3.0/0' > /dev/null 2>&1 &
 
 ## /tmp/gpsd-172-16-42-107.log
 /sd/usr/sbin/gpsd -F /var/run/gpsd.sock udp://0.0.0.0:1337 > /dev/null 2>&1 &
 /bin/sleep 10
 
 ## /tmp/bettercap-wlan1mon-pwnagotchi.log
-# /sd/usr/bin/bettercap -no-history -iface wlan1mon -caplet /sd/LEET/bettercap_wardriving/pwnagotchi.cap > /dev/null 2>&1 &
+# /sd/usr/bin/bettercap -no-history -iface wlan1mon -caplet /sd/LEET/bettercap_wardriving/pwnagotchi.cap -script /sd/LEET/bettercap_wardriving/script.js > /dev/null 2>&1 &
 # /bin/sleep 10
 
 ## /tmp/airodump-ng-wlan2mon.log
-# /usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band abg --gpsd --write /sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap -f 250 --output-format netxml --write-interval 5 wlan2mon > /dev/null 2>&1 &
+# /usr/sbin/airodump-ng -K 1 --essid-regex '^(?!YOUR_MANAGEMENT_AP)' --band abg --gpsd --write /sd/LEET/handshakes/airodump_ng_netxml/AI-RO-DU-MP-00 -f 250 --output-format netxml --write-interval 5 wlan2mon > /dev/null 2>&1 &
 # /bin/sleep 30
 
 /bin/echo '' > /tmp/button.log 2>&1 &
