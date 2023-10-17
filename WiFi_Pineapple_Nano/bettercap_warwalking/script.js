@@ -23,7 +23,7 @@ function exportEvent(data, newClient) {
 
     var capture = {
         Hostname: data.hostname,
-        Mac: data.mac,
+        Mac: data.mac.toUpperCase(),
         Updated: accessPoint[data.mac].lastSeen,
         Latitude: gps.Latitude,
         Longitude: gps.Longitude,
