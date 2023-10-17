@@ -11,7 +11,7 @@ BUTTONED=""  # variable that stores the pressed button state
 #
 ESSID_REGEX='^(?!YOUR_MANAGEMENT_AP)'
 BAND='abg'
-LOG_FOLDER='/sd/LEET/handshakes/AI-RO-DU-MP-00-00_full.pcap'
+LOG_FOLDER='/sd/LEET/handshakes/airodump_ng_netxml/AI-RO-DU-MP-00'
 C_HOP=250
 O_FORMAT='netxml'
 W_INTERVAL=5
