@@ -39,7 +39,7 @@ function exportEvent(data) {
 
     var pHostname = data.hostname.replace(/[/\\?%7*:|"<>._ -]/g, '');
     var pMac = data.mac.replace(/:/g, '');
-    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + today + '_' + pHostname + '_' + pMac + '.gps.json';
+    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + today + '_' + pHostname.toUpperCase() + '_' + pMac.toUpperCase() + '.gps.json';
 
     writeFile(path, JSON.stringify(capture));
 
