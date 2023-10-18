@@ -16,6 +16,7 @@ from bs4 import BeautifulSoup
 
 
 def parse_json(filepath):
+
     print(f'[*] Parsing {filepath}')
 
     networks = None
@@ -72,6 +73,7 @@ def get_file_list(location):
 
 
 def merge_data(data1, data2):
+
     data1['lastupdate'] = data2['lastupdate']
 
     data1['packets'] = data1['packets'] + data2['packets']
@@ -100,6 +102,7 @@ def merge_data(data1, data2):
 
 
 def generate_style(soup, id, icon_src):
+
     style = soup.new_tag('Style', id=id)
 
     icon_style = soup.new_tag('IconStyle')
@@ -127,6 +130,7 @@ def generate_style(soup, id, icon_src):
 
 
 def generate_klm(networks, out):
+
     soup = BeautifulSoup(features='xml')
     kml = soup.new_tag('kml', xmlns='http://www.opengis.net/kml/2.2')
     doc = soup.new_tag('Document')
