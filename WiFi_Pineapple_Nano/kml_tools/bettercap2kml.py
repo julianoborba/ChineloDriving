@@ -16,7 +16,6 @@ from bs4 import BeautifulSoup
 
 
 def parse_json(filepath):
-
     print(f'[*] Parsing {filepath}')
 
     networks = None
@@ -32,17 +31,15 @@ def parse_json(filepath):
         last_update = last_update_raw.strftime("%a %b %d %H:%M:%S %Y")
 
         clients = {}
-        count = 1
         for c in json_data['Clients']:
             client_mac = c['mac']
             client_manuf = c['vendor'] if c['vendor'] else 'unknown manufacturer'
             client_signal = 'near AP' if c['rssi'] > -70 else 'not so near AP'
-            clients[f'client_{count}'] = {
+            clients[f'{client_mac.upper()}'] = {
                 'mac': client_mac.upper(),
                 'manuf': client_manuf,
                 'signal': client_signal
             }
-            count += 1
 
         networks = [{
             'lastupdate': last_update,
@@ -75,26 +72,34 @@ def get_file_list(location):
 
 
 def merge_data(data1, data2):
+    data1['lastupdate'] = data2['lastupdate']
 
-    # float() for ValueError: Unknown format code 'f' for object of type 'NavigableString'
+    data1['packets'] = data1['packets'] + data2['packets']
+
+    data1['clients'].update(data2['clients'])
+
+    if data2['essid']:
+        data1['essid'] = data2['essid'] + ' [U]'
+
+    if data2['manuf']:
+        data1['manuf'] = data2['manuf'] + ' [U]'
+
+    if '~Empty~' not in data2['encryption']:
+        data1['encryption'][0] = data2['encryption'][0] + ' [U]'
+
     raw_lat_1 = "{:.6f}".format(float(data1['gps']['lat']))
     raw_lon_1 = "{:.6f}".format(float(data1['gps']['lon']))
-
     raw_lat_2 = "{:.6f}".format(float(data2['gps']['lat']))
     raw_lon_2 = "{:.6f}".format(float(data2['gps']['lon']))
-
     lat = "{:.6f}".format(float(raw_lat_1) + float(raw_lat_2))
     lon = "{:.6f}".format(float(raw_lon_1) + float(raw_lon_2))
-
     data1['gps']['lat'] = float(lat)
     data1['gps']['lon'] = float(lon)
-    data1['packets'] = data1['packets'] + data2['packets']
 
     return data1
 
 
 def generate_style(soup, id, icon_src):
-
     style = soup.new_tag('Style', id=id)
 
     icon_style = soup.new_tag('IconStyle')
@@ -122,30 +127,20 @@ def generate_style(soup, id, icon_src):
 
 
 def generate_klm(networks, out):
-
     soup = BeautifulSoup(features='xml')
     kml = soup.new_tag('kml', xmlns='http://www.opengis.net/kml/2.2')
     doc = soup.new_tag('Document')
 
-    #doc.append(generate_style(soup, 'standard', 'http://maps.google.com/mapfiles/kml/paddle/red-stars.png'))
-    #doc.append(generate_style(soup, 'open', 'http://maps.google.com/mapfiles/kml/paddle/grn-stars.png'))
     doc.append(generate_style(soup, 'standard', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/closed.png'))
     doc.append(generate_style(soup, 'open', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/open.png'))
     doc.append(generate_style(soup, 'clear', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/clear.png'))
     doc.append(generate_style(soup, 'clients', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/clients.png'))
 
     for k, n in networks.items():
-
         pm = soup.new_tag('Placemark')
         
         name = soup.new_tag('name')
         name.string = f'[{n["essid"]}][{n["bssid"]}]'
-        # name.string = ''
-        # limit = 8
-        # if f'{n["essid"]}' and len(f'{n["essid"]}') > limit:
-        #    name.string = f'[{n["essid"][:limit]} ...][{n["bssid"]}]'
-        # else:
-        #    name.string = f'[{n["essid"]}][{n["bssid"]}]'
 
         clients = ''
         if n['clients']:
@@ -182,7 +177,7 @@ def generate_klm(networks, out):
             coo.string = f'{n["gps"]["lon"]},{n["gps"]["lat"]}'
 
         stu = soup.new_tag('styleUrl')
-        if n['encryption'] == ['None'] or n['encryption'] == [] or 'OPEN' in n['encryption']:
+        if n['encryption'] == ['None'] or n['encryption'] == [] or 'OPEN' in n['encryption'] or 'OPEN [U]' in n['encryption']:
             stu.string = '#open'
         else:
             if n['clients']:
