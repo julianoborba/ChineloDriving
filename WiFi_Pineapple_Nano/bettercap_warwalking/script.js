@@ -12,7 +12,7 @@ function exportEvent(data) {
         hostname = 'CLOAKED';
     }
 
-    var encryption = '';
+    var encryption = '~Empty~';
     if (data.encryption) {
         encryption = data.encryption;
     }
