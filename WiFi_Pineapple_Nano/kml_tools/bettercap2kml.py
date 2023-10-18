@@ -151,6 +151,12 @@ def generate_klm(networks, out):
         if n['clients']:
             for k, c in n['clients'].items():
                 clients += f'- {c["mac"]}, from {c["manuf"]}, is {c["signal"]}\n'
+        if not clients:
+            clients = '~Empty~'
+
+        manuf = n['manuf']
+        if not manuf:
+            manuf = '~Empty~'
 
         description = soup.new_tag('description')
         description.string = (
@@ -158,7 +164,7 @@ def generate_klm(networks, out):
             f'SEENT:\n{n["seen"]}\n\n'                                  # how many times this item was met
             f'ESSID:\n{n["essid"]}\n\n'                                 # ESSID for that item
             f'BSSID:\n{n["bssid"]}\n\n'                                 # BSSID for that item
-            f'MANUF:\n{n["manuf"]}\n\n'                                 # identified manufacturer of this item
+            f'MANUF:\n{manuf}\n\n'                                 # identified manufacturer of this item
             f'PACKE:\n{n["packets"]}\n\n'                               # estimative of how many packets was collected since last known update
             f'ENCRY:\n{" ".join(str(x) for x in n["encryption"])}\n\n'  # cipher used by that item
             f'PASSW:\n~Empty~\n\n'                                      # estimated shared password in this item
