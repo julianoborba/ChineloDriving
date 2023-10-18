@@ -1,36 +1,35 @@
-var accessPoint = {};
-
-function exportEvent(data, newClient) {
+function exportEvent(data) {
 
     var gps = session.GPS;
     if (gps.Latitude === 0 || gps.Longitude === 0) {
         return;
     }
 
-    if (!accessPoint[data.mac]) {
-        accessPoint[data.mac] = {
-            seen: 0,
-            lastSeen: '',
-            clients: []
-        };
+    var hostname = data.hostname;
+    if (!hostname || hostname.includes('hidden')) {
+        hostname = 'CLOAKED';
     }
 
-    if (!newClient) {
-        accessPoint[data.mac].seen++;
+    var encryption = '';
+    if (data.encryption) {
+        encryption = data.encryption;
     }
-    accessPoint[data.mac].lastSeen = data.last_seen;
-    accessPoint[data.mac].clients = accessPoint[data.mac].clients.concat(data.clients);
+    if (data.authentication) {
+        encryption = encryption + '+' + data.authentication;
+    }
+    if (data.cipher) {
+        encryption = encryption + '-' + data.cipher;
+    }
 
     var capture = {
-        Hostname: data.hostname,
+        Hostname: hostname,
         Mac: data.mac.toUpperCase(),
-        Updated: accessPoint[data.mac].lastSeen,
+        Updated: data.last_seen,
         Latitude: gps.Latitude,
         Longitude: gps.Longitude,
         Altitude: gps.Altitude,
-        Seen: accessPoint[data.mac].seen,
-        Clients: accessPoint[data.mac].clients,
-        Encryption: data.encryption + '+' + data.authentication + '-' + data.cipher,
+        Clients: data.clients,
+        Encryption: encryption,
         Packets: data.received,
         Manufacturer: data.vendor,
         WPS: data.wps
@@ -38,16 +37,17 @@ function exportEvent(data, newClient) {
 
     var pHostname = data.hostname.replace(/[/\\?%7*:|"<>._ ]/g, '');
     var pMac = data.mac.replace(/:/g, '');
-    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + pHostname + '_' + pMac + '.gps.json';
+    var timestamp = new Date().toISOString();
+    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + timestamp + '/' + pHostname + '_' + pMac + '.gps.json';
 
     writeFile(path, JSON.stringify(capture));
 
 }
 
 onEvent('wifi.ap.new', function(event) {
-    exportEvent(event.data, false);
+    exportEvent(event.data);
 });
 
 onEvent('wifi.client.new', function(event) {
-    exportEvent(event.data['AP'], true);
+    exportEvent(event.data['AP']);
 });
