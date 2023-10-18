@@ -12,15 +12,9 @@ import os
 import re
 from json import loads
 from datetime import datetime
-from xml.sax.saxutils import escape
-# from html import escape
 from bs4 import BeautifulSoup
 
 
-# parse strange wifi names
-# regex = r'(  )([a-z]|[A-Z]|\d*)([a-z]|[A-Z]|\d*)(;)'
-# compiler = re.compile(regex, re.I | re.S)
-# replacer = r'\\x\2\3'
 def parse_json(filepath):
 
     print(f'[*] Parsing {filepath}')
@@ -37,6 +31,19 @@ def parse_json(filepath):
         )
         last_update = last_update_raw.strftime("%a %b %d %H:%M:%S %Y")
 
+        clients = {}
+        count = 1
+        for c in json_data['Clients']:
+            client_mac = c['mac']
+            client_manuf = c['vendor'] if c['vendor'] else 'unknown manufacturer'
+            client_signal = 'near AP' if c['rssi'] > -70 else 'not so near AP'
+            clients[f'client_{count}'] = {
+                'mac': client_mac.upper(),
+                'manuf': client_manuf,
+                'signal': client_signal
+            }
+            count += 1
+
         networks = [{
             'lastupdate': last_update,
             'essid': essid,
@@ -45,7 +52,7 @@ def parse_json(filepath):
             'manuf': json_data['Manufacturer'],
             'packets': json_data['Packets'],
             'gps': {'lat': json_data['Latitude'], 'lon': json_data['Longitude']},
-            'clients': None # json_data['Clients']
+            'clients': clients
         }]
 
     return networks
@@ -128,8 +135,6 @@ def generate_klm(networks, out):
     doc.append(generate_style(soup, 'clients', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/clients.png'))
 
     for k, n in networks.items():
-        # if int(n['packets']) <= 0:
-        #     continue
 
         pm = soup.new_tag('Placemark')
         
@@ -157,7 +162,7 @@ def generate_klm(networks, out):
             f'PACKE:\n{n["packets"]}\n\n'                               # estimative of how many packets was collected since last known update
             f'ENCRY:\n{" ".join(str(x) for x in n["encryption"])}\n\n'  # cipher used by that item
             f'PASSW:\n~Empty~\n\n'                                      # estimated shared password in this item
-            f'CLIEN:\n~Empty~'                                          # clients connected at this item
+            f'CLIEN:\n{clients}'                                        # clients connected at this item
         )
 
         pt = soup.new_tag('Point')
