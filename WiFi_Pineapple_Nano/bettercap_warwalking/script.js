@@ -1,3 +1,5 @@
+var today = new Date().toLocaleDateString('BR').replace(/[-]/g, '');
+
 function exportEvent(data) {
 
     var gps = session.GPS;
@@ -6,7 +8,7 @@ function exportEvent(data) {
     }
 
     var hostname = data.hostname;
-    if (!hostname || hostname.includes('hidden')) {
+    if (!hostname || hostname.indexOf('hidden') != -1) {
         hostname = 'CLOAKED';
     }
 
@@ -35,10 +37,9 @@ function exportEvent(data) {
         WPS: data.wps
     };
 
-    var pHostname = data.hostname.replace(/[/\\?%7*:|"<>._ ]/g, '');
+    var pHostname = data.hostname.replace(/[/\\?%7*:|"<>._ -]/g, '');
     var pMac = data.mac.replace(/:/g, '');
-    var timestamp = new Date().toISOString();
-    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + timestamp + '/' + pHostname + '_' + pMac + '.gps.json';
+    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + today + '_' + pHostname + '_' + pMac + '.gps.json';
 
     writeFile(path, JSON.stringify(capture));
 
