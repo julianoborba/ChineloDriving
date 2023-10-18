@@ -182,7 +182,7 @@ def generate_klm(networks, out):
             coo.string = f'{n["gps"]["lon"]},{n["gps"]["lat"]}'
 
         stu = soup.new_tag('styleUrl')
-        if n['encryption'] == ['None'] or n['encryption'] == []:
+        if n['encryption'] == ['None'] or n['encryption'] == [] or 'OPEN' in n['encryption']:
             stu.string = '#open'
         else:
             if n['clients']:
