@@ -53,6 +53,7 @@ def parse_json(filepath):
             print(f'\t[*] Problem parsing file {filepath}')
             return {}
 
+        # expected filename format {essid}_{bssid}.{plugin}-gps.json
         file_basename = os.path.basename(filepath)
         file_splitext = os.path.splitext(file_basename)
         file_splitext = os.path.splitext(file_splitext[0])
