@@ -1,18 +1,71 @@
 #!/usr/bin/env python3
 
-# # #
-# Refers to
-# https://github.com/dreadnought
-# Patrick Salecker <mail@salecker.org>
-# https://www.salecker.org/software/netxml2kml.html
-# # #
-
 import optparse
 import os
 import re
+import math
 from json import loads
 from datetime import datetime
 from bs4 import BeautifulSoup
+
+
+# GPT generated
+def haversine(lat1, lon1, lat2, lon2):
+
+    # Radius of the Earth in kilometers
+    radius = 6371.0
+
+    # Convert latitude and longitude from degrees to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    # Calculate the distance
+    distance = radius * c
+
+    return distance
+
+# GPT generated
+def gps_avg(coordinates):
+
+    if not coordinates:
+        return None, None
+
+    total_x = 0
+    total_y = 0
+    total_z = 0
+
+    for lat, lon in coordinates:
+        lat_rad = math.radians(lat)
+        lon_rad = math.radians(lon)
+
+    # Convert latitude and longitude to Cartesian coordinates
+    x = math.cos(lat_rad) * math.cos(lon_rad)
+    y = math.cos(lat_rad) * math.sin(lon_rad)
+    z = math.sin(lat_rad)
+
+    total_x += x
+    total_y += y
+    total_z += z
+
+    avg_x = total_x / len(coordinates)
+    avg_y = total_y / len(coordinates)
+    avg_z = total_z / len(coordinates)
+
+    # Convert the average Cartesian coordinates back to latitude and longitude
+    avg_lon = math.atan2(avg_y, avg_x)
+    hyp = math.sqrt(avg_x**2 + avg_y**2)
+    avg_lat = math.atan2(avg_z, hyp)
+
+    # Convert latitude and longitude back to degrees
+    avg_lat = math.degrees(avg_lat)
+    avg_lon = math.degrees(avg_lon)
+
+    return avg_lat, avg_lon
 
 
 def parse_json(filepath):
@@ -21,7 +74,12 @@ def parse_json(filepath):
 
     networks = None
     with open(filepath, encoding='latin-1') as file:
-        json_data = loads(file.read())
+        
+        try:
+            json_data = loads(file.read())
+        except:
+            print(f'\t[*] Problem parsing file {filepath}')
+            return []
 
         essid = json_data['Hostname']
         bssid = json_data['Mac']
@@ -74,6 +132,8 @@ def get_file_list(location):
 
 def merge_data(data1, data2):
 
+    print(f'[*] Merging [{data1["essid"]}] AP data seen {data1["seen"]} times')
+
     data1['lastupdate'] = data2['lastupdate']
 
     data1['packets'] = data1['packets'] + data2['packets']
@@ -89,14 +149,14 @@ def merge_data(data1, data2):
     if '~Empty~' not in data2['encryption']:
         data1['encryption'][0] = data2['encryption'][0] + ' [U]'
 
-    raw_lat_1 = "{:.6f}".format(float(data1['gps']['lat']))
-    raw_lon_1 = "{:.6f}".format(float(data1['gps']['lon']))
-    raw_lat_2 = "{:.6f}".format(float(data2['gps']['lat']))
-    raw_lon_2 = "{:.6f}".format(float(data2['gps']['lon']))
-    lat = "{:.6f}".format(float(raw_lat_1) + float(raw_lat_2))
-    lon = "{:.6f}".format(float(raw_lon_1) + float(raw_lon_2))
-    data1['gps']['lat'] = float(lat)
-    data1['gps']['lon'] = float(lon)
+    coordinates = [
+        (float(data1['gps']['lat']), float(data1['gps']['lon'])),
+        (float(data2['gps']['lat']), float(data2['gps']['lon']))
+    ]
+    avg_latitude, avg_longitude = gps_avg(coordinates)
+    
+    data1['gps']['lat'] = float(avg_latitude)
+    data1['gps']['lon'] = float(avg_longitude)
 
     return data1
 
@@ -172,13 +232,7 @@ def generate_klm(networks, out):
 
         pt = soup.new_tag('Point')
         coo = soup.new_tag('coordinates')
-
-        if n['seen'] > 1:
-            lon = n["gps"]["lon"] / n['seen'] 
-            lat = n["gps"]["lat"] / n['seen']
-            coo.string = f'{"{:.6f}".format(lon)},{"{:.6f}".format(lat)}'
-        else:
-            coo.string = f'{n["gps"]["lon"]},{n["gps"]["lat"]}'
+        coo.string = f'{n["gps"]["lon"]},{n["gps"]["lat"]}'
 
         stu = soup.new_tag('styleUrl')
         if n['encryption'] == ['None'] or n['encryption'] == [] or 'OPEN' in n['encryption'] or 'OPEN [U]' in n['encryption']:
@@ -209,6 +263,10 @@ def generate_klm(networks, out):
         file.write(str(soup))
 
 
+# Refers to
+# https://github.com/dreadnought
+# Patrick Salecker <mail@salecker.org>
+# https://www.salecker.org/software/netxml2kml.html
 def main():
 
     parser = optparse.OptionParser('usage%prog -d <json directory> -o <output file>')
@@ -223,7 +281,7 @@ def main():
         print(parser.usage)
         exit(0)
 
-    files = get_file_list(dirpath)
+    files = sorted(get_file_list(dirpath))
     nnlist = [parse_json(file) for file in files]
 
     unique_net = {}
