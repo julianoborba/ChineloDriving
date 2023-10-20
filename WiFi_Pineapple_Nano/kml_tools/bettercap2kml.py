@@ -10,10 +10,41 @@ from bs4 import BeautifulSoup
 
 
 # GPT generated
+def apply_haversine(lat1, lon1, lat2, lon2):
+
+    # Radius of the Earth in kilometers
+    radius = 6371.0
+
+    # Convert latitude and longitude from degrees to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    # Calculate the distance and return
+    return round(radius * c, 2)
+
+
+# GPT generated
+def filter_coordinates(coordinates, lat1, lon1, max_distance):
+
+    return [(lat, lon) for lat, lon in coordinates if apply_haversine(lat1, lon1, lat, lon) <= max_distance]
+
+
+# GPT generated
 def obtain_gps_avg(coordinates):
 
     if not coordinates:
         return None, None
+
+    # Assuming the initial coordinates as the first in the list
+    lat1, lon1 = coordinates[0]
+
+    # Filter coordinates within meters
+    coordinates = filter_coordinates(coordinates, lat1, lon1, 0.60)
 
     total_x = 0
     total_y = 0
@@ -51,7 +82,7 @@ def parse_json(filepath):
             json_data = loads(file.read())
         except:
             print(f'\t[*] Problem parsing file {filepath}')
-            return []
+            return {}
 
         essid = json_data['Hostname']
         bssid = json_data['Mac']
