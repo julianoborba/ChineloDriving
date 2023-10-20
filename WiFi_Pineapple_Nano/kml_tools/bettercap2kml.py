@@ -29,6 +29,7 @@ def haversine(lat1, lon1, lat2, lon2):
 
     return distance
 
+
 # GPT generated
 def gps_avg(coordinates):
 
@@ -133,31 +134,22 @@ def get_file_list(location):
 def merge_data(data1, data2):
 
     print(f'[*] Merging [{data1["essid"]}] AP data seen {data1["seen"]} times')
-
     data1['lastupdate'] = data2['lastupdate']
-
     data1['packets'] = data1['packets'] + data2['packets']
-
     data1['clients'].update(data2['clients'])
-
     if data2['essid']:
         data1['essid'] = data2['essid'] + ' [U]'
-
     if data2['manuf']:
         data1['manuf'] = data2['manuf'] + ' [U]'
-
     if '~Empty~' not in data2['encryption']:
         data1['encryption'][0] = data2['encryption'][0] + ' [U]'
-
     coordinates = [
         (float(data1['gps']['lat']), float(data1['gps']['lon'])),
         (float(data2['gps']['lat']), float(data2['gps']['lon']))
     ]
     avg_latitude, avg_longitude = gps_avg(coordinates)
-    
     data1['gps']['lat'] = float(avg_latitude)
     data1['gps']['lon'] = float(avg_longitude)
-
     return data1
 
 
