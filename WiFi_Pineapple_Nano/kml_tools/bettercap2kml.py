@@ -44,7 +44,7 @@ def obtain_gps_avg(coordinates):
     lat1, lon1 = coordinates[0]
 
     # Filter coordinates within meters
-    coordinates = filter_coordinates(coordinates, lat1, lon1, 0.60)
+    coordinates = filter_coordinates(coordinates, lat1, lon1, 0.40)
 
     total_x = 0
     total_y = 0
