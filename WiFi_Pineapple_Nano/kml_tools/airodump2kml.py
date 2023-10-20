@@ -1,18 +1,45 @@
 #!/usr/bin/env python3
 
-# # #
-# Refers to
-# https://github.com/dreadnought
-# Patrick Salecker <mail@salecker.org>
-# https://www.salecker.org/software/netxml2kml.html
-# # #
 
 import optparse
 import os
 import re
+import math
 from xml.sax.saxutils import escape
 # from html import escape
 from bs4 import BeautifulSoup
+
+
+# GPT generated
+def obtain_gps_avg(coordinates):
+
+    if not coordinates:
+        return None, None
+
+    total_x = 0
+    total_y = 0
+    total_z = 0
+
+    for lat, lon in coordinates:
+        lat_rad = math.radians(lat)
+        lon_rad = math.radians(lon)
+
+        # Convert latitude and longitude to Cartesian coordinates
+        total_x += math.cos(lat_rad) * math.cos(lon_rad)
+        total_y += math.cos(lat_rad) * math.sin(lon_rad)
+        total_z += math.sin(lat_rad)
+
+    avg_x = total_x / len(coordinates)
+    avg_y = total_y / len(coordinates)
+    avg_z = total_z / len(coordinates)
+
+    # Convert the average Cartesian coordinates back to latitude and longitude
+    avg_lon = math.atan2(avg_y, avg_x)
+    hyp = math.sqrt(avg_x**2 + avg_y**2)
+    avg_lat = math.atan2(avg_z, hyp)
+
+    # Convert latitude and longitude back to degrees and return
+    return math.degrees(avg_lat), math.degrees(avg_lon)
 
 
 # parse strange wifi names
@@ -22,16 +49,13 @@ replacer = r'\\x\2\3'
 def parse_network_node(node):
 
     ssid = node.find('ssid', recursive=False)
-
     bssid = '~Empty~' if not node.find('bssid', recursive=False) else node.find('bssid', recursive=False).string
     
     try:
         is_cloaked = 'true' in ssid.essid.attrs['cloaked']
     except:
         is_cloaked = True
-
     essid_raw = ssid.essid.string if not is_cloaked else 'CLOAKED'
-
     try:
         essid_raw = escape(essid_raw)
         essid = compiler.sub(replacer, essid_raw)
@@ -39,16 +63,13 @@ def parse_network_node(node):
         essid = '~Empty~'
     
     gps_info = node.find('gps-info', recursive=False)
-
     if not gps_info:
         print(f'\t[*] EMPTY GPS BSSID [{bssid}] ESSID [{essid}]')
         return None
-
     avg_lat_raw = gps_info.find('avg-lat').string
     round_lat = float(avg_lat_raw) # round(float(avg_lat_raw))
     avg_lon_raw = gps_info.find('avg-lon').string
     round_lon = float(avg_lon_raw) # round(float(avg_lon_raw))
-
     if round_lat == 0 or round_lon == 0:
         print(f'\t[*] ZERO LAT ZERO LON BSSID [{bssid}] ESSID [{essid}]')
         # centroid of scanned area
@@ -59,16 +80,13 @@ def parse_network_node(node):
     clients = {}
     for c in node.find_all('wireless-client', {'type': 'established'}):
         client_mac = c.find('client-mac').string
-
         client_manuf_raw = escape(c.find('client-manuf').string)
         client_manuf_raw = compiler.sub(replacer, client_manuf_raw)
         client_manuf = client_manuf_raw if 'Unknown' not in client_manuf_raw else 'unknown manufacturer'
-
         min_signal_raw = int(c.find('min_signal_dbm').string)
         max_signal_raw = int(c.find('max_signal_dbm').string)
         avg_signal = float(min_signal_raw + max_signal_raw) / 2
         client_signal = 'near AP' if round(avg_signal) > -70 else 'not so near AP'
-
         clients[f'client_{c.attrs["number"]}'] = {
             'mac': client_mac,
             'manuf': client_manuf,
@@ -85,7 +103,7 @@ def parse_network_node(node):
     except:
         encryption = ['~Empty~']
 
-    manufacturer = node.find('manuf', recursive=False).string
+    manufacturer = '~Empty~' if not node.find('manuf', recursive=False) else node.find('manuf', recursive=False).string
     
     try:
         captured_packets = int(ssid.packets.string)
@@ -112,35 +130,35 @@ def parse_netxml(filepath):
     with open(filepath, encoding='latin-1') as file:
         soup = BeautifulSoup(file, 'lxml')
 
-    networks = [parse_network_node(n) for n in soup.find_all(
+    return [parse_network_node(network) for network in soup.find_all(
         'wireless-network', {'type': 'infrastructure'}
     )]
-    return networks
 
 
 def get_file_list(path):
 
     pattern = re.compile('.*\.netxml$')
-    files = [f for f in os.listdir(path) if pattern.match(f)]
-    return files
+    return [file for file in os.listdir(path) if pattern.match(file)]
 
 
 def merge_data(data1, data2):
 
-    # float() for ValueError: Unknown format code 'f' for object of type 'NavigableString'
-    raw_lat_1 = "{:.6f}".format(float(data1['gps']['lat']))
-    raw_lon_1 = "{:.6f}".format(float(data1['gps']['lon']))
-
-    raw_lat_2 = "{:.6f}".format(float(data2['gps']['lat']))
-    raw_lon_2 = "{:.6f}".format(float(data2['gps']['lon']))
-
-    lat = "{:.6f}".format(float(raw_lat_1) + float(raw_lat_2))
-    lon = "{:.6f}".format(float(raw_lon_1) + float(raw_lon_2))
-
-    data1['gps']['lat'] = float(lat)
-    data1['gps']['lon'] = float(lon)
+    print(f'[*] Merging [{data1["essid"]}] AP data seen {data1["seen"]} times')
+    data1['lastupdate'] = data2['lastupdate']
     data1['packets'] = data1['packets'] + data2['packets']
-
+    data1['clients'].update(data2['clients'])
+    if data2['essid']:
+        data1['essid'] = data2['essid'] + ' [U]'
+    if data2['manuf'] and '~Empty~' not in data2['manuf']:
+        data1['manuf'] = data2['manuf'] + ' [U]'
+    data1['encryption'] = data2['encryption']
+    coordinates = [
+        (float(data1['gps']['lat']), float(data1['gps']['lon'])),
+        (float(data2['gps']['lat']), float(data2['gps']['lon']))
+    ]
+    avg_latitude, avg_longitude = obtain_gps_avg(coordinates)
+    data1['gps']['lat'] = float(avg_latitude)
+    data1['gps']['lon'] = float(avg_longitude)
     return data1
 
 
@@ -185,54 +203,48 @@ def generate_klm(networks, out):
     doc.append(generate_style(soup, 'clear', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/clear.png'))
     doc.append(generate_style(soup, 'clients', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/WiFi_Pineapple_Nano/kml_tools/clients.png'))
 
-    for k, n in networks.items():
-        if int(n['packets']) <= 0:
-            continue
-
+    for k, network in networks.items():
         pm = soup.new_tag('Placemark')
         
         name = soup.new_tag('name')
-        name.string = f'[{n["essid"]}][{n["bssid"]}]'
-        # name.string = ''
-        # limit = 8
-        # if f'{n["essid"]}' and len(f'{n["essid"]}') > limit:
-        #    name.string = f'[{n["essid"][:limit]} ...][{n["bssid"]}]'
-        # else:
-        #    name.string = f'[{n["essid"]}][{n["bssid"]}]'
+        name.string = f'[{network["essid"]}][{network["bssid"]}]'
 
         clients = ''
-        if n['clients']:
-            for k, c in n['clients'].items():
+        if network['clients']:
+            for k, c in network['clients'].items():
                 clients += f'- {c["mac"]}, from {c["manuf"]}, is {c["signal"]}\n'
+        if not clients:
+            clients = '~Empty~'
+
+        manuf = network['manuf']
+        if not manuf:
+            manuf = '~Empty~'
+
+        encryption = " ".join(str(x) for x in network["encryption"])
 
         description = soup.new_tag('description')
         description.string = (
-            f'LAUPD:\n{n["lastupdate"]}\n\n'                            # last known update date on this item
-            f'SEENT:\n{n["seen"]}\n\n'                                  # how many times this item was met
-            f'ESSID:\n{n["essid"]}\n\n'                                 # ESSID for that item
-            f'BSSID:\n{n["bssid"]}\n\n'                                 # BSSID for that item
-            f'MANUF:\n{n["manuf"]}\n\n'                                 # identified manufacturer of this item
-            f'PACKE:\n{n["packets"]}\n\n'                               # estimative of how many packets was collected since last known update
-            f'ENCRY:\n{" ".join(str(x) for x in n["encryption"])}\n\n'  # cipher used by that item
-            f'PASSW:\n~Empty~\n\n'                                      # estimated shared password in this item
-            f'CLIEN:\n{clients}'                                        # clients connected at this iten
+            f'LAUPD:\n{network["lastupdate"]}\n\n'   # last known update date on this item
+            f'SEENT:\n{network["seen"]}\n\n'         # how many times this item was met
+            f'ESSID:\n{network["essid"]}\n\n'        # ESSID for that item
+            f'BSSID:\n{network["bssid"]}\n\n'        # BSSID for that item
+            f'MANUF:\n{manuf}\n\n'                   # identified manufacturer of this item
+            f'PACKE:\n{network["packets"]}\n\n'      # estimative of how many packets was collected since last known update
+            f'ENCRY:\n{encryption}\n\n'              # cipher used by that item
+            f'PASSW:\n~Empty~\n\n'                   # estimated shared password in this item
+            f'CLIEN:\n{clients}'                     # clients connected at this iten
         )
 
         pt = soup.new_tag('Point')
         coo = soup.new_tag('coordinates')
-
-        if n['seen'] > 1:
-            lon = n["gps"]["lon"] / n['seen'] 
-            lat = n["gps"]["lat"] / n['seen']
-            coo.string = f'{"{:.6f}".format(lon)},{"{:.6f}".format(lat)}'
-        else:
-            coo.string = f'{n["gps"]["lon"]},{n["gps"]["lat"]}'
+        coo.string = f'{network["gps"]["lon"]},{network["gps"]["lat"]}'
 
         stu = soup.new_tag('styleUrl')
-        if n['encryption'] == ['None'] or n['encryption'] == []:
+        is_open_network = network['encryption'] == ['None'] or network['encryption'] == [] and network["packets"] > 0
+        if is_open_network:
             stu.string = '#open'
         else:
-            if n['clients']:
+            if network['clients']:
                 stu.string = '#clients'
             else:
                 stu.string = '#standard'
@@ -257,6 +269,10 @@ def generate_klm(networks, out):
         file.write(str(soup))
 
 
+# Refers to
+# https://github.com/dreadnought
+# Patrick Salecker <mail@salecker.org>
+# https://www.salecker.org/software/netxml2kml.html
 def main():
 
     parser = optparse.OptionParser('usage%prog -d <netxml directory> -o <output file>')
@@ -271,24 +287,24 @@ def main():
         print(parser.usage)
         exit(0)
 
-    files = get_file_list(dirpath)
-    nnlist = [parse_netxml(os.path.join(dirpath, f)) for f in files]
+    files = sorted(get_file_list(dirpath))
+    network_list = [parse_netxml(os.path.join(dirpath, f)) for f in files]
 
-    unique_net = {}
+    unique_network = {}
 
-    for nl in nnlist:
-        for n in nl:
-            if n and 'bssid' in n and n['bssid']:
-                if n['bssid'] not in unique_net:
-                    unique_net[n['bssid']] = n
-                    unique_net[n['bssid']]['seen'] = 1
+    for networks in network_list:
+        for network in networks:
+            if network and 'bssid' in network and network['bssid']:
+                if network['bssid'] not in unique_network:
+                    unique_network[network['bssid']] = network
+                    unique_network[network['bssid']]['seen'] = 1
                 else:
-                    unique_net[n['bssid']]['seen'] = unique_net[n['bssid']]['seen'] + 1
-                    unique_net[n['bssid']] = merge_data(
-                        unique_net[n['bssid']], n
+                    unique_network[network['bssid']]['seen'] = unique_network[network['bssid']]['seen'] + 1
+                    unique_network[network['bssid']] = merge_data(
+                        unique_network[network['bssid']], network
                     )
 
-    generate_klm(unique_net, out)
+    generate_klm(unique_network, out)
 
 
 if __name__ == '__main__':
