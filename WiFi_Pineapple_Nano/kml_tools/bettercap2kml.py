@@ -23,14 +23,10 @@ def obtain_gps_avg(coordinates):
         lat_rad = math.radians(lat)
         lon_rad = math.radians(lon)
 
-    # Convert latitude and longitude to Cartesian coordinates
-    x = math.cos(lat_rad) * math.cos(lon_rad)
-    y = math.cos(lat_rad) * math.sin(lon_rad)
-    z = math.sin(lat_rad)
-
-    total_x += x
-    total_y += y
-    total_z += z
+        # Convert latitude and longitude to Cartesian coordinates
+        total_x += math.cos(lat_rad) * math.cos(lon_rad)
+        total_y += math.cos(lat_rad) * math.sin(lon_rad)
+        total_z += math.sin(lat_rad)
 
     avg_x = total_x / len(coordinates)
     avg_y = total_y / len(coordinates)
@@ -41,11 +37,8 @@ def obtain_gps_avg(coordinates):
     hyp = math.sqrt(avg_x**2 + avg_y**2)
     avg_lat = math.atan2(avg_z, hyp)
 
-    # Convert latitude and longitude back to degrees
-    avg_lat = math.degrees(avg_lat)
-    avg_lon = math.degrees(avg_lon)
-
-    return avg_lat, avg_lon
+    # Convert latitude and longitude back to degrees and return
+    return math.degrees(avg_lat), math.degrees(avg_lon)
 
 
 def parse_json(filepath):
@@ -203,7 +196,9 @@ def generate_klm(networks, out):
         coo.string = f'{network["gps"]["lon"]},{network["gps"]["lat"]}'
 
         stu = soup.new_tag('styleUrl')
-        if not network['encryption'] or '~Empty~' in network['encryption'] or 'OPEN' in network['encryption']:
+        is_open_network = not network['encryption'] or 'OPEN' in network['encryption']
+        is_possibly_open_network = '~Empty~' in network['encryption'] and network["packets"] > 0
+        if is_open_network or is_possibly_open_network:
             stu.string = '#open'
         else:
             if network['clients']:
