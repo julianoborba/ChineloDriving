@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 
 # GPT generated
-def gps_avg(coordinates):
+def obtain_gps_avg(coordinates):
 
     if not coordinates:
         return None, None
@@ -52,7 +52,6 @@ def parse_json(filepath):
 
     print(f'[*] Parsing {filepath}')
 
-    networks = None
     with open(filepath, encoding='latin-1') as file:
         
         try:
@@ -80,18 +79,16 @@ def parse_json(filepath):
                 'signal': client_signal
             }
 
-        networks = [{
+        return {
             'lastupdate': last_update,
             'essid': essid,
-            'encryption': [json_data['Encryption']],
+            'encryption': json_data['Encryption'],
             'bssid': bssid,
             'manuf': json_data['Manufacturer'],
             'packets': json_data['Packets'],
             'gps': {'lat': json_data['Latitude'], 'lon': json_data['Longitude']},
             'clients': clients
-        }]
-
-    return networks
+        }
 
 
 found_files = []
@@ -121,12 +118,12 @@ def merge_data(data1, data2):
     if data2['manuf']:
         data1['manuf'] = data2['manuf'] + ' [U]'
     if '~Empty~' not in data2['encryption']:
-        data1['encryption'][0] = data2['encryption'][0] + ' [U]'
+        data1['encryption'] = data2['encryption'] + ' [U]'
     coordinates = [
         (float(data1['gps']['lat']), float(data1['gps']['lon'])),
         (float(data2['gps']['lat']), float(data2['gps']['lon']))
     ]
-    avg_latitude, avg_longitude = gps_avg(coordinates)
+    avg_latitude, avg_longitude = obtain_gps_avg(coordinates)
     data1['gps']['lat'] = float(avg_latitude)
     data1['gps']['lon'] = float(avg_longitude)
     return data1
@@ -171,45 +168,45 @@ def generate_klm(networks, out):
     doc.append(generate_style(soup, 'clear', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/clear.png'))
     doc.append(generate_style(soup, 'clients', 'https://raw.githubusercontent.com/julianoborba/ChineloDriving/main/Pwnagotchi/kml_tools/clients.png'))
 
-    for k, n in networks.items():
+    for k, network in networks.items():
         pm = soup.new_tag('Placemark')
         
         name = soup.new_tag('name')
-        name.string = f'[{n["essid"]}][{n["bssid"]}]'
+        name.string = f'[{network["essid"]}][{network["bssid"]}]'
 
         clients = ''
-        if n['clients']:
-            for k, c in n['clients'].items():
+        if network['clients']:
+            for k, c in network['clients'].items():
                 clients += f'- {c["mac"]}, from {c["manuf"]}, is {c["signal"]}\n'
         if not clients:
             clients = '~Empty~'
 
-        manuf = n['manuf']
+        manuf = network['manuf']
         if not manuf:
             manuf = '~Empty~'
 
         description = soup.new_tag('description')
         description.string = (
-            f'LAUPD:\n{n["lastupdate"]}\n\n'                            # last known update date on this item
-            f'SEENT:\n{n["seen"]}\n\n'                                  # how many times this item was met
-            f'ESSID:\n{n["essid"]}\n\n'                                 # ESSID for that item
-            f'BSSID:\n{n["bssid"]}\n\n'                                 # BSSID for that item
-            f'MANUF:\n{manuf}\n\n'                                      # identified manufacturer of this item
-            f'PACKE:\n{n["packets"]}\n\n'                               # estimative of how many packets was collected since last known update
-            f'ENCRY:\n{" ".join(str(x) for x in n["encryption"])}\n\n'  # cipher used by that item
-            f'PASSW:\n~Empty~\n\n'                                      # estimated shared password in this item
-            f'CLIEN:\n{clients}'                                        # clients connected at this item
+            f'LAUPD:\n{network["lastupdate"]}\n\n'         # last known update date on this item
+            f'SEENT:\n{network["seen"]}\n\n'               # how many times this item was met
+            f'ESSID:\n{network["essid"]}\n\n'              # ESSID for that item
+            f'BSSID:\n{network["bssid"]}\n\n'              # BSSID for that item
+            f'MANUF:\n{manuf}\n\n'                         # identified manufacturer of this item
+            f'PACKE:\n{network["packets"]}\n\n'            # estimative of how many packets was collected since last known update
+            f'ENCRY:\n{network["encryption"]}\n\n'         # cipher used by that item
+            f'PASSW:\n~Empty~\n\n'                         # estimated shared password in this item
+            f'CLIEN:\n{clients}'                           # clients connected at this item
         )
 
         pt = soup.new_tag('Point')
         coo = soup.new_tag('coordinates')
-        coo.string = f'{n["gps"]["lon"]},{n["gps"]["lat"]}'
+        coo.string = f'{network["gps"]["lon"]},{network["gps"]["lat"]}'
 
         stu = soup.new_tag('styleUrl')
-        if n['encryption'] == ['None'] or n['encryption'] == [] or 'OPEN' in n['encryption'] or 'OPEN [U]' in n['encryption']:
+        if not network['encryption'] or '~Empty~' in network['encryption'] or 'OPEN' in network['encryption']:
             stu.string = '#open'
         else:
-            if n['clients']:
+            if network['clients']:
                 stu.string = '#clients'
             else:
                 stu.string = '#standard'
@@ -253,23 +250,22 @@ def main():
         exit(0)
 
     files = sorted(get_file_list(dirpath))
-    nnlist = [parse_json(file) for file in files]
+    networks = [parse_json(file) for file in files]
 
-    unique_net = {}
+    unique_network = {}
 
-    for nl in nnlist:
-        for n in nl:
-            if n and 'bssid' in n and n['bssid']:
-                if n['bssid'] not in unique_net:
-                    unique_net[n['bssid']] = n
-                    unique_net[n['bssid']]['seen'] = 1
-                else:
-                    unique_net[n['bssid']]['seen'] = unique_net[n['bssid']]['seen'] + 1
-                    unique_net[n['bssid']] = merge_data(
-                        unique_net[n['bssid']], n
-                    )
+    for network in networks:
+        if network and 'bssid' in network and network['bssid']:
+            if network['bssid'] not in unique_network:
+                unique_network[network['bssid']] = network
+                unique_network[network['bssid']]['seen'] = 1
+            else:
+                unique_network[network['bssid']]['seen'] = unique_network[network['bssid']]['seen'] + 1
+                unique_network[network['bssid']] = merge_data(
+                    unique_network[network['bssid']], network
+                )
 
-    generate_klm(unique_net, out)
+    generate_klm(unique_network, out)
 
 
 if __name__ == '__main__':
