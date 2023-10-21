@@ -1,4 +1,4 @@
-var today = new Date().toLocaleDateString('BR').replace(/[-]/g, '');
+var today = (new Date()).toISOString().replace(/[^0-9]/g, '').slice(0, -3)
 
 function exportEvent(data) {
 
