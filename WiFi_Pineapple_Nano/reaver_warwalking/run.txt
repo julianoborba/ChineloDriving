@@ -1,0 +1,1 @@
+gnu-nohup ./run.sh &> "/sd/LEET/reaver_wardriving/reaver.log" &
