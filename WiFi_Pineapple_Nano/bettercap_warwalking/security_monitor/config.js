@@ -1,3 +1,5 @@
+// refers to https://github.com/bettercap/scripts, Simone Margaritelli a.k.a. evilsocket
+
 var wifiInterface = 'wlan1mon';
 
 var notifyUknownEndpoints = true;
