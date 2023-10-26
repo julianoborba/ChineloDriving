@@ -56,9 +56,11 @@ function onNewEndpoint(event) {
     if (endpoint.mac in db.endpoints) {
         updateEndpoint(endpoint);
     } else {
+        var gps = session.GPS;
         var msg = l
             + '🖥️ **NEW UNKNOWN ENDPOINT CONNECTION DETECTED** 🖥️' + l + l
-            + decorateEndpoint(endpoint, '');
+            + decorateEndpoint(endpoint, '') + l
+            + '**GPS** ' + gps.Latitude + ',' + gps.Longitude;
         db.endpoints[endpoint.mac] = endpoint;
     }
     writeFile(dbPath, JSON.stringify(db));
