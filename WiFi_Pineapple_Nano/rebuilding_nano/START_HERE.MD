@@ -138,13 +138,13 @@ nano /etc/rc.local
 /bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan1 > /dev/null 2>&1 &
 /bin/sleep 25
 
-/tmp/airmon-ng-wlan2.log
+# /tmp/airmon-ng-wlan2.log
 /bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan2 > /dev/null 2>&1 &
 /bin/sleep 25
 
 # /tmp/airmon-ng-wlan3.log
-# /bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan3 > /dev/null 2>&1 &
-# /bin/sleep 25
+/bin/echo -e "n\nn" | /usr/sbin/airmon-ng start wlan3 > /dev/null 2>&1 &
+/bin/sleep 25
 
 ## /tmp/run-ntpd.log
 /usr/sbin/ntpd > /dev/null 2>&1 &
@@ -157,6 +157,7 @@ nano /etc/rc.local
 
 ## /tmp/bettercap-wlan1mon-pwnagotchi.log
 # /sd/usr/bin/bettercap -no-history -iface wlan1mon -caplet /sd/LEET/bettercap_wardriving/pwnagotchi.cap -script /sd/LEET/bettercap_wardriving/script.js > /dev/null 2>&1 &
+# /sd/usr/bin/bettercap -no-history -iface wlan1mon -script /sd/LEET/bettercap_wardriving/security_monitor/main.js > /dev/null 2>&1 &
 # /bin/sleep 10
 
 ## /tmp/airodump-ng-wlan2mon.log
@@ -170,7 +171,6 @@ nano /etc/rc.local
 
 # Enter commands above this line
 exit 0
-
 ```
 
 ```
