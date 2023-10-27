@@ -19,28 +19,28 @@ if (db.aps && db.endpoints) {
 }
 
 function updateEndpoint(endpoint) {
-    var known = db.endpoints[endpoint.mac];
+    var known = db.endpoints[endpoint.mac.toUpperCase()];
     known.last_seen = endpoint.last_seen;
     for (var name in endpoint.meta.values) {
         if (!(name in known.meta.values)) {
             known.meta.values[name] = endpoint.meta.values[name];
         }
     }
-    db.endpoints[endpoint.mac] = known;
+    db.endpoints[endpoint.mac.toUpperCase()] = known;
 }
 
 function decorateMac(label, mac, vendor) {
     if (vendor.length) {
-        return label + ': ' + mac + ' ( ' + vendor + ' )';
+        return label + ': ' + mac.toUpperCase() + ' ( ' + vendor + ' )';
     }
-    return label + ': ' + mac;
+    return label + ': ' + mac.toUpperCase();
 }
 
 function decorateEndpoint(endpoint, padding) {
     var msg = (endpoint.hostname.length ? (padding + 'Hostname: ' + endpoint.hostname + l) : '') +
         (endpoint.ipv4.length ? (padding + 'IPv4: ' + endpoint.ipv4 + l) : '') +
         (endpoint.ipv6.length ? (padding + 'IPv6: ' + endpoint.ipv6 + l) : '') +
-        padding + decorateMac('MAC', endpoint.mac, endpoint.vendor) + l;
+        padding + decorateMac('MAC', endpoint.mac.toUpperCase(), endpoint.vendor) + l;
     if (endpoint.meta.values.length > 0) {
         msg += l + padding + 'Info:' + l;
         for (var name in endpoint.meta.values) {
@@ -53,7 +53,7 @@ function decorateEndpoint(endpoint, padding) {
 function onNewEndpoint(event) {
     var endpoint = event.data;
     var msg = null;
-    if (endpoint.mac in db.endpoints) {
+    if (endpoint.mac.toUpperCase() in db.endpoints) {
         updateEndpoint(endpoint);
     } else {
         var gps = session.GPS;
@@ -61,7 +61,7 @@ function onNewEndpoint(event) {
             + '🖥️ **NEW UNKNOWN ENDPOINT CONNECTION DETECTED** 🖥️' + l + l
             + decorateEndpoint(endpoint, '') + l
             + '**GPS** ' + gps.Latitude + ',' + gps.Longitude;
-        db.endpoints[endpoint.mac] = endpoint;
+        db.endpoints[endpoint.mac.toUpperCase()] = endpoint;
     }
     writeFile(dbPath, JSON.stringify(db));
     if (notifyUknownEndpoints && msg != null) {
@@ -70,14 +70,14 @@ function onNewEndpoint(event) {
 }
 
 function updateAP(ap) {
-    var known = db.aps[ap.mac];
+    var known = db.aps[ap.mac.toUpperCase()];
     known.last_seen = ap.last_seen;
     for (var name in ap.meta.values) {
         if (!(name in known.meta.values)) {
             known.meta.values[name] = ap.meta.values[name];
         }
     }
-    db.aps[ap.mac] = known;
+    db.aps[ap.mac.toUpperCase()] = known;
 }
 
 function onNewAP(event) {
@@ -91,22 +91,22 @@ function onNewAP(event) {
             + '📡 **KARMA ATTACK DETECTED** 📡' + l + l
             + '**BSSID** '      + ap.mac.toUpperCase() + l
             + '**ESSID** '      + ap.hostname + l
-            + '**PACKETS** '    + ap.received + l
+            // + '**PACKETS** '    + ap.received + l
             + '**GPS** '        + gps.Latitude + ',' + gps.Longitude + l
             + '**SEEN** '       + ap.last_seen;
         sendMessage(message);
         return;
     }
-    if (ap.mac in db.aps) {
+    if (ap.mac.toUpperCase() in db.aps) {
         updateAP(ap);
     } else {
-        db.aps[ap.mac] = ap;
+        db.aps[ap.mac.toUpperCase()] = ap;
     }
     writeFile(dbPath, JSON.stringify(db));
 }
 
 function decorateAP(ap, padding) {
-    var msg = padding + 'ESSID: ' + ap.hostname + l + padding + decorateMac('BSSID', ap.mac, ap.vendor) + l;
+    var msg = padding + 'ESSID: ' + ap.hostname + l + padding + decorateMac('BSSID', ap.mac.toUpperCase(), ap.vendor) + l;
     if (ap.meta.values.length > 0) {
         msg += l + padding + 'Info:' + l;
         for (var name in ap.meta.values) {
@@ -117,12 +117,12 @@ function decorateAP(ap, padding) {
 }
 
 function decorateAddress(label, mac) {
-    if (mac in db.endpoints) {
-        return label + ':' + l + decorateEndpoint(db.endpoints[mac], '  ');
-    } else if (mac in db.aps) {
-        return label + ':' + l + decorateAP(db.aps[mac], '  ');
+    if (mac.toUpperCase() in db.endpoints) {
+        return label + ':' + l + decorateEndpoint(db.endpoints[mac.toUpperCase()], '  ');
+    } else if (mac.toUpperCase() in db.aps) {
+        return label + ':' + l + decorateAP(db.aps[mac.toUpperCase()], '  ');
     }
-    return label + ': ' + mac + l;
+    return label + ': ' + mac.toUpperCase() + l;
 }
 
 function onDeauthentication(event) {
@@ -139,9 +139,9 @@ function onDeauthentication(event) {
         + '**ESSID** '      + data.ap.hostname + l
         + '**GPS** '        + gps.Latitude + ',' + gps.Longitude + l
         + '**SEEN** '       + data.ap.last_seen + l
-        + decorateAddress('**ADDRESS**', data.address1) + l
-        + decorateAddress('**ADDRESS**', data.address2) + l
-        + decorateAddress('**ADDRESS**', data.address3);
+        + decorateAddress('**ADDRESS1**', data.address1)
+        + decorateAddress('**ADDRESS2**', data.address2);
+        // + decorateAddress('**ADDRESS3**', data.address3);
     sendMessage(message);
 }
 
@@ -154,8 +154,8 @@ function onGatewayChange(event) {
     var message = l
         + '🕵️ **MAN-IN-THE-MIDDLE ATTACK DETECTED** 🕵️' + l + l
         + '**TYPE** '       + change.type + ' gateway change, possible MiTM attack' + l
-        + '**PREVIP** '     + change.prev.ip + ' / ' + change.prev.mac + l
-        + '**NEWIP** '      + change.new.ip + ' / ' + change.new.mac + l
+        + '**PREVIP** '     + change.prev.ip + ' / ' + change.prev.mac.toUpperCase() + l
+        + '**NEWIP** '      + change.new.ip + ' / ' + change.new.mac.toUpperCase() + l
         + '**GPS** '        + gps.Latitude + ',' + gps.Longitude;
     sendMessage(message);
 }
