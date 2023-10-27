@@ -6,6 +6,8 @@ require("functions")
 
 log("session script loaded, fake AP is " + fakeESSID);
 
+run('set gps.device localhost:2947');
+run('gps on');
 run('set ticker.commands ""');
 run('set ticker.period 10');
 run('ticker on');
