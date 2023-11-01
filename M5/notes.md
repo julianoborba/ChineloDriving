@@ -16,6 +16,7 @@
 ### SDCard Reader M5StickC Plus wiring
 
 - StickCPlus Header - SPI SD Card Reader
+  
 3v3 - 3v3
 
 GND - GND
