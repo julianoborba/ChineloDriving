@@ -44,7 +44,8 @@ def build_heatmap(root_folder):
 
 
 if __name__ == "__main__":
-    # sample folder structure
+    # run: pipenv run python heat.py 
+    # sample folder structure:
     # ROOT_FOLDER/
     # ├── 1
     # │   ├── AAAAMMDD_ESSID_BSSID.gps.json
