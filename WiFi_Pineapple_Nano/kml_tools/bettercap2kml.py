@@ -44,7 +44,7 @@ def obtain_gps_avg(coordinates):
     lat1, lon1 = coordinates[0]
 
     # Filter coordinates within meters
-    coordinates = filter_coordinates(coordinates, lat1, lon1, 0.40)
+    coordinates = filter_coordinates(coordinates, lat1, lon1, 0.30)
 
     total_x = 0
     total_y = 0
@@ -131,7 +131,7 @@ def get_file_list(location):
     return found_files
 
 
-def merge_data(data1, data2):
+def merge_data(data1, data2, coordinates):
 
     print(f'[*] Merging [{data1["essid"]}] AP data seen {data1["seen"]} times')
     data1['lastupdate'] = data2['lastupdate']
@@ -143,10 +143,6 @@ def merge_data(data1, data2):
         data1['manuf'] = data2['manuf'] + ' [U]'
     if '~Empty~' not in data2['encryption']:
         data1['encryption'] = data2['encryption'] + ' [U]'
-    coordinates = [
-        (float(data1['gps']['lat']), float(data1['gps']['lon'])),
-        (float(data2['gps']['lat']), float(data2['gps']['lon']))
-    ]
     avg_latitude, avg_longitude = obtain_gps_avg(coordinates)
     data1['gps']['lat'] = float(avg_latitude)
     data1['gps']['lon'] = float(avg_longitude)
@@ -244,7 +240,7 @@ def generate_klm(networks, out):
         # set placemark visibitily, 0 is invisible
         visibility = soup.new_tag('visibility')
         visibility.string = '0'
-        # pm.append(visibility)
+        pm.append(visibility)
 
         pm.append(description)
         pm.append(pt)
@@ -279,16 +275,22 @@ def main():
     networks = [parse_json(file) for file in files]
 
     unique_network = {}
+    coordinates = {}
 
     for network in networks:
         if network and 'bssid' in network and network['bssid']:
+            if network['bssid'] not in coordinates:
+                coordinates[network['bssid']] = [(network['gps']['lat'], network['gps']['lon'])]
+            else:
+                coordinates[network['bssid']] += [(network['gps']['lat'], network['gps']['lon'])]
+            
             if network['bssid'] not in unique_network:
                 unique_network[network['bssid']] = network
                 unique_network[network['bssid']]['seen'] = 1
             else:
                 unique_network[network['bssid']]['seen'] = unique_network[network['bssid']]['seen'] + 1
                 unique_network[network['bssid']] = merge_data(
-                    unique_network[network['bssid']], network
+                    unique_network[network['bssid']], network, coordinates[network['bssid']]
                 )
 
     generate_klm(unique_network, out)
