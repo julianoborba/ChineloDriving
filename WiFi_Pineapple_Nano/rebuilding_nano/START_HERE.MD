@@ -359,7 +359,7 @@ In GPSd Forwarder, set your Nano IP (172.16.42.1) and GPSd listenning port (1337
 
 Hit start. Done here.
 
-## The pwnagotchi.cap
+## Tips, the pwnagotchi.cap
 
 * Automatic handshake and PMKID capture from all access points, posted on September 19, 2019 by Alex
 * [https://miloserdov.org/?p=3500](https://miloserdov.org/?p=3500)
