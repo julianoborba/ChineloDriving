@@ -394,4 +394,8 @@ Let's build our own pwnagotchi-godzilla, mine is huge.
 /sbin/reboot
 ```
 
-That's all folks
+## Tips, I have to configure my Alfa network usb adapter as access point before use it with Bettercap
+
+* TO DO
+
+That's all folks.
