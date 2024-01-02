@@ -6,7 +6,7 @@
 sudo ifconfig YOUR_PINE_ETH 192.168.1.2 netmask 255.255.255.0 up
 ```
 
-Enter 192.168.1.1 in browser incognito mode.
+Enter 192.168.1.1, use browser incognito mode.
 
 ## Rebuilding Pineapple Nano firmware, with Pineapple Termidor
 
@@ -101,18 +101,37 @@ And wait... You can do this how many times you feel you want to.
 
 * Use WiFi Pineapple Connector for Linux, [https://github.com/hak5darren/wp6](https://github.com/hak5darren/wp6)
 
-Enter Nano's shell by ssh an run the commands below.
+Enter Nano's shell by ssh, run the commands below.
 
 ```
 ln -s /lib/libubus.so.20210603 /lib/libubus.so
 ```
+
+Optional, to make handshakes folder persistent.
 
 ```
 rm -rf /tmp/handshakes/
 ln -s /sd/LEET/handshakes /tmp/
 ```
 
-Make sure to install GPSd, Aircrack suite, Bettercap suite, Kismet and Reaver suite.
+```
+nano /etc/init.d/boot
+```
+
+`/etc/init.d/boot` content.
+
+```
+        ## CUSTOM ##
+
+        rm -rf /tmp/handshakes/
+        ln -s /sd/LEET/handshakes /tmp
+
+        ## CUSTOM ##
+```
+
+Optional, make sure to install GPSd, Aircrack suite, Bettercap suite, Kismet and Reaver suite.
+
+Optional, place an updated OUI database in external storage as replacement for the builtin file.
 
 ```
 rm /etc/aircrack-ng/oui.txt
@@ -120,10 +139,14 @@ ln -s /sd/LEET/airodump_warwalking/airodump-ng-oui.txt /etc/aircrack-ng/oui.txt
 ln -s /sd/LEET/airodump_warwalking/airodump-ng-oui.txt /etc/aircrack-ng/airodump-ng-oui.txt
 ```
 
+Optional, setup your `/etc/rc.local` file for start on boot tasks.
+
 ```
 nano /etc/rc.local
 ```
-/etc/rc.local content
+
+See `/etc/rc.local` content below.
+
 ```
 /bin/sleep 25
 
@@ -173,25 +196,14 @@ nano /etc/rc.local
 exit 0
 ```
 
-```
-nano /etc/init.d/boot
-```
-/etc/init.d/boot content
-```
-        ## CUSTOM ##
-
-        rm -rf /tmp/handshakes/
-        ln -s /sd/LEET/handshakes /tmp
-
-        ## CUSTOM ##
-```
-
 Just a reminder that this exists, take a look.
+
 ```
 nano /etc/rc.d/S99pineapd
 ```
 
 Just a reminder that this exists, take a look.
+
 ```
 nano /etc/config/system
 ```
