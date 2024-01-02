@@ -7,7 +7,7 @@
 * 1 USB HUB, with external power preferred
 * 1 USB pen drive, a nice one
 * 1 TP-LINK TL-WN722N v1 (Atheros/AR9271L) 2GHz wifi dongle with 5dBi antenna (working great)
-* 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle with 5dBi antenna (working great). Requires boot your adapter in AP mode, more information about AP mode at [morrownr guides](https://github.com/morrownr/USB-WiFi/blob/main/home/AP_Mode/Bridged_Wireless_Access_Point.md)
+* 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle with 5dBi antenna (working great). Requires also boot your adapter in AP mode, more information about AP mode at [morrownr guides](https://github.com/morrownr/USB-WiFi/blob/main/home/AP_Mode/Bridged_Wireless_Access_Point.md)
 * 1 20000mAh Lithium Polymer Power Bank (PINENG PN-932, just enough)
   |Power Bank specs| |
   |---|---
