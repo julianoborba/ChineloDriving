@@ -213,34 +213,24 @@ nano /etc/config/system
 * SWAP is 61,0352 MiB;
 * Don't use SDCARD, use a USB HUB with pendrive instead. Leave a swap partition of same size as Nano.
 
-Just a reminder that this exists, take a look.
-```
-opkg update && opkg install --dest sd blkid
-blkid | grep /dev/sd
-```
+Configure external storage. This works nice.
 
-Just a reminder that this exists, take a look.
+* [https://openwrt.org/docs/guide-user/storage/fstab](https://openwrt.org/docs/guide-user/storage/fstab)
+* [https://openwrt.org/docs/techref/block_mount](https://openwrt.org/docs/techref/block_mount)
+* [https://openwrt.org/docs/guide-user/storage/usb-installing](https://openwrt.org/docs/guide-user/storage/usb-installing)
+
 ```
 nano /etc/fstab
 ```
-/etc/fstab content
+
+`/etc/fstab` content.
+
 ```
 # <file system> <mount point> <type> <options> <dump> <pass>
 UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX /dev/sda1 ext4 errors=remount-ro 0 1
 UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX /dev/sda2 swap sw 0 0
 ```
 
-Just a reminder that this exists, take a look.
-```
-fstab config
-```
-
-Just a reminder that this exists, take a look.
-```
-block detect | uci import fstab
-```
-
-Just a reminder that this exists, take a look. This works nice.
 ```
 config global
 	option	anon_swap	'0'
@@ -265,6 +255,7 @@ config swap
 ```
 
 Just a reminder that this exists, take a look.
+
 ```
 /etc/rc.d/S99wpc-tools
 wpc-tools 
@@ -280,31 +271,7 @@ Available commands:
     handle_lost_phys     Fix unrecognized wifi interfaces
 ```
 
-Just a reminder that this exists, take a look
-```
-cat /etc/modules.d/35-usb-ehci 
-ehci-hcd
-```
-
-A reminder to deal with USB stuff, if needed.
-
-* [https://openwrt.org/docs/guide-user/storage/usb-installing](https://openwrt.org/docs/guide-user/storage/usb-installing)
-
-```
-opkg list-installed | grep usb
-
-opkg remove kmod-usb-uhci
-opkg remove kmod-usb-ehci
-opkg remove kmod-usb-ohci
-opkg remove kmod-usb2
-opkg remove kmod-usb3
-
-opkg install kmod-usb2
-opkg install kmod-usb3
-opkg install kmod-usb-storage-uas
-```
-
-## I had to install WPS modules from community manually
+## Tips, I had to install WPS modules from community manually
 
 ```
 touch /tmp/wps.progress
@@ -321,7 +288,7 @@ uci commit wps.module.installed
 rm /tmp/wps.progress
 ```
 
-## Kismet did not work for me, APs don't show up, but this is usefull
+## Tips, Kismet did not work for me, APs don't show up, but this is usefull
 
 * Wardriving with WIFI Pineapple Nano in Mobile World Congress 2016 at Barcelona, posted on 2016/02/27 by Roger Carhuatocto
 * [https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/](https://holisticsecurity.wordpress.com/2016/02/27/wardriving-wifi-pineapple-nano-mobile-world-congress-2016-barcelona/)
@@ -380,7 +347,7 @@ kismet_server
 kismet_client
 ```
 
-## Easy GPS for the Pineapple
+## Tips, Easy GPS for the Pineapple
 
 * [https://github.com/tiagoshibata/Android-GPSd-Forwarder](https://github.com/tiagoshibata/Android-GPSd-Forwarder)
 
@@ -399,7 +366,7 @@ Hit start. Done here.
 
 Let's build our own pwnagotchi-godzilla, mine is huge.
 
-## The Pineapple button script
+## Tips, the Pineapple button script
 
 ```
 #!/bin/bash
