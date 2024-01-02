@@ -107,7 +107,7 @@ Enter Nano's shell by ssh, run the commands below.
 ln -s /lib/libubus.so.20210603 /lib/libubus.so
 ```
 
-Optional, to make handshakes folder persistent.
+Optional, to make handshakes folder persistent. To persist on boot you have to edit `/etc/init.d/boot` file.
 
 ```
 rm -rf /tmp/handshakes/
@@ -131,7 +131,7 @@ nano /etc/init.d/boot
 
 Optional, make sure to install GPSd, Aircrack suite, Bettercap suite, Kismet and Reaver suite.
 
-Optional, place an updated OUI database in external storage as replacement for the builtin file.
+Optional, place an updated OUI aircrack-ng database in external storage as replacement for the builtin file.
 
 ```
 rm /etc/aircrack-ng/oui.txt
