@@ -363,6 +363,8 @@ Hit start. Done here.
 
 * Automatic handshake and PMKID capture from all access points, posted on September 19, 2019 by Alex
 * [https://miloserdov.org/?p=3500](https://miloserdov.org/?p=3500)
+* Project PITA Writeup - build a mini mass deauther using Bettercap and a Raspberry Pi Zero, posted on July 28, 2018 by Evilsocket
+* [https://www.evilsocket.net/2018/07/28/Project-PITA-Writeup-build-a-mini-mass-deauther-using-bettercap-and-a-Raspberry-Pi-Zero-W/](https://www.evilsocket.net/2018/07/28/Project-PITA-Writeup-build-a-mini-mass-deauther-using-bettercap-and-a-Raspberry-Pi-Zero-W/)
 
 Let's build our own pwnagotchi-godzilla, mine is huge.
 
