@@ -1,5 +1,3 @@
-var today = (new Date()).toISOString().replace(/[^0-9]/g, '').slice(0, -3)
-
 function exportEvent(data) {
 
     var gps = session.GPS;
@@ -39,6 +37,8 @@ function exportEvent(data) {
 
     var pHostname = data.hostname.replace(/[/\\?%7*:|"<>._ -]/g, '');
     var pMac = data.mac.replace(/:/g, '');
+    var today = (new Date()).toISOString().replace(/[^0-9]/g, '').slice(0, -3)
+
     var path = '/sd/LEET/handshakes/bettercap_gps_json/' + today + '_' + pHostname.toUpperCase() + '_' + pMac.toUpperCase() + '.gps.json';
 
     writeFile(path, JSON.stringify(capture));
