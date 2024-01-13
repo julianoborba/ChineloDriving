@@ -4,12 +4,16 @@
 
 * 1 pair of flip-flops
 * 1 stylish shoulder bag for man (I mean, if we get to be specific, but can be just a cool bag)
+
 <img src='WiFi_Pineapple_Nano/rebuilding_nano/added_hardware/withflipflops.png' width='300'>
+
 * 1 USB HUB, with external power preferred
 * 1 USB pen drive, a nice one
 * 1 TP-LINK TL-WN722N v1 (Atheros/AR9271L) 2GHz wifi dongle with 5dBi antenna (working great)
 * 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle with 5dBi antenna (working great). Requires also boot your adapter in AP mode before using it in MONITOR mode, more information about AP mode at [morrownr guides](https://github.com/morrownr/USB-WiFi/blob/main/home/AP_Mode/Bridged_Wireless_Access_Point.md)
+
 <img src='WiFi_Pineapple_Nano/rebuilding_nano/added_hardware/pineapplenanomonster.png' width='300'>
+
 * 1 20000mAh Lithium Polymer Power Bank (PINENG PN-932, just enough)
   |Power Bank specs| |
   |---|---
