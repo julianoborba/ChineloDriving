@@ -11,7 +11,7 @@
 * 1 USB pen drive, a nice one
 * 1 TP-LINK TL-WN722N v1 (Atheros/AR9271L) 2GHz wifi dongle with 5dBi antenna (working great) or
 * 1 Ralink/MediaTek RT5572 (also working great) and
-* 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle with 5dBi antenna (working great). Requires also boot your adapter in AP mode before using it in MONITOR mode, more information about AP mode at [morrownr guides](https://github.com/morrownr/USB-WiFi/blob/main/home/AP_Mode/Bridged_Wireless_Access_Point.md)
+* 1 ALFA Network AWUS036ACM (MediaTek/MT7612U) 2.4/5GHz wifi dongle with 5dBi antenna (working great). Requires also boot your adapter in AP mode before using it in MONITOR mode (see [this Bettercap issue](https://github.com/bettercap/bettercap/issues/1061)), more information about AP mode at [morrownr guides](https://github.com/morrownr/USB-WiFi/blob/main/home/AP_Mode/Bridged_Wireless_Access_Point.md)
 
 <img src='pineapplenanomonster.png' width='300'>
 
