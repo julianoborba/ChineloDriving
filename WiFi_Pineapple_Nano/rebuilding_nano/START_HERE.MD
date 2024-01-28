@@ -398,6 +398,78 @@ Let's build our own pwnagotchi-godzilla, mine is huge.
 
 ## Tips, I have to configure my Alfa network usb adapter as access point before use it with Bettercap
 
-* TO DO
+* [https://github.com/bettercap/bettercap/issues/1061](https://github.com/bettercap/bettercap/issues/1061)
+* [https://openwrt.org/docs/guide-user/network/wifi/basic](https://openwrt.org/docs/guide-user/network/wifi/basic)
 
-That's all folks.
+```
+onfig wifi-device 'radio3'
+    option type 'mac80211'
+    option channel '36'
+    option hwmode '11a'
+    option path 'platform/ehci-platform/usb1/1-1/1-1.3/1-1.3.3/1-1.3.3:1.0'
+    option htmode 'VHT80'
+    option country 'BR'
+
+config wifi-iface
+    option device 'radio3'
+    option ifname 'wlan3'
+    option network 'lan'
+    option mode 'ap'
+    option maxassoc '0'
+    option ssid 'XXXX_XXXX'
+    option encryption 'psk2+ccmp'
+    option key 'XXXXXXXXXX'
+    option hidden '0'
+    option disabled '0'
+```
+
+* [https://github.com/morrownr/USB-WiFi/blob/main/home/AP_Mode/Bridged_Wireless_Access_Point.md](https://github.com/morrownr/USB-WiFi/blob/main/home/AP_Mode/Bridged_Wireless_Access_Point.md)
+
+```
+nano /tmp/run/hostapd-phy0.conf
+```
+
+`/tmp/run/hostapd-phy0.conf` content.
+
+```
+driver=nl80211
+logger_syslog=-1
+logger_syslog_level=0
+logger_stdout=127
+logger_stdout_level=2
+country_code=BR
+ieee80211d=1
+ieee80211h=1
+hw_mode=a
+channel=36
+
+ieee80211n=1
+ht_coex=0
+ht_capab=[HT40+][LDPC][SHORT-GI-20][SHORT-GI-40][TX-STBC][RX-STBC1]
+vht_oper_chwidth=1
+vht_oper_centr_freq_seg0_idx=42
+ieee80211ac=1
+vht_capab=[RXLDPC][SHORT-GI-80][TX-STBC-2BY1][RX-ANTENNA-PATTERN][TX-ANTENNA-PATTERN][RX-STBC1][MAX-A-MPDU-LEN-EXP3]
+
+interface=wlan3
+ctrl_interface=/var/run/hostapd
+ctrl_interface_group=0
+ap_isolate=1
+disassoc_low_ack=1
+preamble=1
+wmm_enabled=1
+ignore_broadcast_ssid=0
+uapsd_advertisement_enabled=1
+wpa_passphrase=XXXXXXXXXX
+auth_algs=3
+wpa=2
+wpa_pairwise=CCMP
+ssid=XXXX_XXXX
+bridge=br-lan
+wpa_key_mgmt=WPA-PSK
+okc=0
+disable_pmksa_caching=1
+bssid=XX:XX:XX:XX:XX:XX
+```
+
+## That's all folks.
