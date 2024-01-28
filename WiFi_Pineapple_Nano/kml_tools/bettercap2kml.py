@@ -5,7 +5,7 @@ import os
 import re
 import math
 from json import loads
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from bs4 import BeautifulSoup
 
 
@@ -72,6 +72,18 @@ def obtain_gps_avg(coordinates):
     return math.degrees(avg_lat), math.degrees(avg_lon)
 
 
+def get_bullet_list(data, indent=0):
+    list = []
+    for k, v in data.items():
+        if isinstance(v, dict):
+            n_list = get_bullet_list(v, indent + 1)
+            list.append(f"{' ' * (indent * 2)}- {k}:".encode('unicode_escape').decode('utf-8'))
+            list.extend(n_list)
+        else:
+            list.append(f"{' ' * (indent * 2)}- {k}: {v}".encode('unicode_escape').decode('utf-8'))
+    return list
+
+
 def parse_json(filepath):
 
     print(f'[*] Parsing {filepath}')
@@ -87,10 +99,14 @@ def parse_json(filepath):
         essid = json_data['Hostname']
         bssid = json_data['Mac']
 
-        last_update_raw = datetime.strptime(
-            f'{json_data["Updated"][:18]}', '%Y-%m-%dT%H:%M:%S'
-        )
-        last_update = last_update_raw.strftime("%a %b %d %H:%M:%S %Y")
+        last_update_raw = datetime.strptime(json_data['Updated'][:-4], '%Y-%m-%dT%H:%M:%S.%f')
+        utc_time = last_update_raw.replace(tzinfo=timezone.utc)
+        
+        # Brasília is UTC-3
+        utc_timezone = timezone(timedelta(hours=-3))
+        
+        last_update_raw = utc_time.astimezone(utc_timezone)
+        last_update = last_update_raw.strftime('%d-%m-%Y %H:%M:%S')
 
         clients = {}
         for c in json_data['Clients']:
@@ -102,6 +118,10 @@ def parse_json(filepath):
                 'manuf': client_manuf,
                 'signal': client_signal
             }
+        
+        wps = []
+        if 'WPS' in json_data and json_data['WPS']:
+            wps = get_bullet_list(json_data['WPS'])
 
         return {
             'lastupdate': last_update,
@@ -111,14 +131,15 @@ def parse_json(filepath):
             'manuf': json_data['Manufacturer'],
             'packets': json_data['Packets'],
             'gps': {'lat': json_data['Latitude'], 'lon': json_data['Longitude']},
-            'clients': clients
+            'clients': clients,
+            'wps': wps
         }
 
 
 found_files = []
 def get_file_list(location):
 
-    pattern = re.compile('.*\.json$')
+    pattern = re.compile('.*gps.json$')
     paths = os.listdir(location)
     for artifact in paths:
         if os.path.isfile(os.path.join(location,artifact)):
@@ -137,6 +158,7 @@ def merge_data(data1, data2, coordinates):
     data1['lastupdate'] = data2['lastupdate']
     data1['packets'] = data1['packets'] + data2['packets']
     data1['clients'].update(data2['clients'])
+    data1['wps'] = data2['wps']
     if data2['essid']:
         data1['essid'] = data2['essid'] + ' [U]'
     if data2['manuf']:
@@ -199,11 +221,17 @@ def generate_klm(networks, out):
             for k, c in network['clients'].items():
                 clients += f'- {c["mac"]}, from {c["manuf"]}, is {c["signal"]}\n'
         if not clients:
-            clients = '~Empty~'
+            clients = '~Empty~\n'
 
         manuf = network['manuf']
         if not manuf:
             manuf = '~Empty~'
+        
+        wps = ''
+        for line in network["wps"]:
+            wps += f'{line}\n'
+        if not wps:
+            wps = '~Empty~\n'
 
         description = soup.new_tag('description')
         description.string = (
@@ -215,7 +243,8 @@ def generate_klm(networks, out):
             f'PACKE:\n{network["packets"]}\n\n'            # estimative of how many packets was collected since last known update
             f'ENCRY:\n{network["encryption"]}\n\n'         # cipher used by that item
             f'PASSW:\n~Empty~\n\n'                         # estimated shared password in this item
-            f'CLIEN:\n{clients}'                           # clients connected at this item
+            f'WPSCF:\n{wps}\n'                             # wps configuration for that item
+            f'CLIEN:\n{clients}\n'                         # clients connected at this item
         )
 
         pt = soup.new_tag('Point')
@@ -240,7 +269,7 @@ def generate_klm(networks, out):
         # set placemark visibitily, 0 is invisible
         visibility = soup.new_tag('visibility')
         visibility.string = '0'
-        pm.append(visibility)
+        # pm.append(visibility)
 
         pm.append(description)
         pm.append(pt)
