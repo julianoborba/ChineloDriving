@@ -1,8 +1,9 @@
 function exportEvent(data) {
 
     var gps = session.GPS;
+    var sufix = '.gps.json';
     if (gps.Latitude === 0 || gps.Longitude === 0) {
-        return;
+        sufix = '.net.json';
     }
 
     var hostname = data.hostname;
@@ -39,7 +40,7 @@ function exportEvent(data) {
     var pMac = data.mac.replace(/:/g, '');
     var today = (new Date()).toISOString().replace(/[^0-9]/g, '').slice(0, -3)
 
-    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + today + '_' + pHostname.toUpperCase() + '_' + pMac.toUpperCase() + '.gps.json';
+    var path = '/sd/LEET/handshakes/bettercap_gps_json/' + today + '_' + pHostname.toUpperCase() + '_' + pMac.toUpperCase() + sufix;
 
     writeFile(path, JSON.stringify(capture));
 
@@ -51,4 +52,16 @@ onEvent('wifi.ap.new', function(event) {
 
 onEvent('wifi.client.new', function(event) {
     exportEvent(event.data['AP']);
+});
+
+onEvent('tick', function(event) {
+    var gps = session.GPS;
+    if (gps.Latitude === 0 || gps.Longitude === 0) {
+        try {
+            run('gps off');
+            run('gps on');
+        } catch (e) {
+            // nothing
+        }
+    }
 });
