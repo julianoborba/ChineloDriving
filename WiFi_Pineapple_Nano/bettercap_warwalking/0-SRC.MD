@@ -2,4 +2,4 @@
 
 * [https://github.com/julianoborba/bettercap](https://github.com/julianoborba/bettercap)
 * [https://github.com/bettercap/bettercap/issues/1061](https://github.com/bettercap/bettercap/issues/1061)
-* [sha256sum] 89ecaf5d41ec3ee967e39cdd1b6ff0f4a50e50def30ce6dff9f15b0b89918e7a  bettercap_2.32.0-2_mips_24kc.ipk
+* [sha256sum] 100f37fbe6b46c85c514ec5f823fa2632126bd28fcab831e77d46cc0b389bf72  bettercap_2.32.0-2_mips_24kc.ipk
