@@ -471,5 +471,164 @@ okc=0
 disable_pmksa_caching=1
 bssid=XX:XX:XX:XX:XX:XX
 ```
+## Tips, using both 2GHz and 5GHz with Pineapple
+
+* [https://theirsecurity.com/tips-and-best-practice/wifi-pineapple-5ghz/](https://theirsecurity.com/tips-and-best-practice/wifi-pineapple-5ghz/)
+* [http://web.archive.org/web/20231001023521/https://theirsecurity.com/tips-and-best-practice/wifi-pineapple-5ghz/](http://web.archive.org/web/20231001023521/https://theirsecurity.com/tips-and-best-practice/wifi-pineapple-5ghz/)
+
+```
+§§ Wifi Pineapple – 5Ghz §§
+
+I have been having a lot of fun with my Wifi Pineapple!
+
+But, Today is a great day as Wifi Pineapple got 5Ghz!
+
+I’ve also written a guide further down how to set it up!
+
+§§ The Adapter §§
+
+Having read through the Hak5 docs on compatible adapters, there are 2 choices either an AWUS036ACM from Alpha or an EP-AC1605.
+
+The latter is from Edup and for some reason, mainly lack of sleep, I picked this one.
+
+The adapter cost me £16 from Aliexpress, got here in 8 days and surprisingly for Aliexpress Wifi Adapters, it felt new and well built!
+
+Beware though! if your looking for this on Aliexpress as some aren’t advertised correctly. You need one based on the MT7612U chipset and some are advertised as RTL8812AU.
+
+[IMAGE]
+
+I know! The alpha is smaller, why didn’t i just pick that one!
+
+§§ Setting it up §§
+
+So, Hak5 say this works out of the box as a 5ghz adapter which is completely true!
+
+It just needs configuring to use 5Ghz vs 2.4Ghz.
+
+It’s really easy to do and ive written the below guide on how to it in terminal. There are also some oneliners to copy into your terminal to change between 2.4Ghz and 5Ghz.
+
+This is providing you set it up the same way i did
+
+To open the terminal, click this icon
+
+[IMAGE]
+
+§ Step 1 §
+
+Make sure your Wifi Adapter shows!
+
+Type in ifconfig and you should have an extra adapter.
+
+[IMAGE]
+
+As you can see, mine shows and can see its called wlan3
+
+§ Step 2 §
+
+cd /etc/config
+
+[IMAGE]
+
+In the config folder, the two files we need to edit are pineap and wireless.
+
+But before we do this, backup your current config files using;
+
+cp pineap pineap2g && cp wireless wireless2g
+
+Then use nano with;
+
+nano pineap
+
+[IMAGE]
+
+In the above image we are changing the following
+
+option pineap_interface 'wlan1mon'
+# change this to
+option pineap_interface 'wlan3mon'
+
+Then to exit, its CTRL+X, hit the Y button to save the changes and press Enter, onto the next one.
+
+nano wireless
+
+[IMAGE]
+
+On this one, you may need to scroll down to find it, but we are changing
+
+option ifname 'wlan1'
+# change this to 
+option ifname 'wlan3'
+
+Save and exit like we did before.
+
+Then, we are going to backup these changes with
+
+cp pineap pineap5g && cp wireless wireless5g
+
+§ Step 3 §
+
+Last file we need to edit, so change directory and make the backup with;
+
+cd /etc/init.d && cp pineapd pineapd2g
+
+We need to make 2 changes in this file so open it with
+
+nano pineapd
+
+[IMAGE]
+
+This is the first change
+
+pineap_interface = wlan1mon
+# this becomes
+pineap_interface=wlan3mon
+
+[IMAGE]
+
+This is the last change we need to make
+
+ifconfig wlan1mon &>dev/null || airmon-ng start wlan1 &>/dev/null
+# This becomes 
+ifconfig wlan3mon &>dev/null || airmon-ng start wlan3 &>/dev/null
+
+Save and exit like we did before
+
+Then create another backup with;
+
+cp pineapd pineapd5g
+
+§ Step 4 §
+
+[IMAGE]
+
+So, we have 5g settings currently active (you need to restart for these to take effect).
+
+We also have 2 backups of each file, one with 2.4Ghz settings and 5Ghz settings.
+
+From this, you can run either of the commands to change the settings back and forth. I.e you want to use the internal 2.4Ghz radios vs plugging your 5Ghz adapter in.
+
+To switch to 2.4Ghz
+
+cd /etc/config && rm pineap && rm wireless && cp pineap2g pineap && cp wireless2g wireless && cd /etc/init.d && rm pineapd && cp pineapd2g pineapd
+
+To switch to 5Ghz
+
+cd /etc/config && rm pineap && rm wireless && cp pineap5g pineap && cp wireless5g wireless && cd /etc/init.d && rm pineapd && cp pineapd5g pineapd
+
+When you copy these in to the terminal, it wont display the full thing correctly, but it will run all the commands and complete correctly.
+
+Don’t forget to restart after each change!
+
+§§ Conclusion §§
+
+I really like using the WiFi pineapple with its new 5Ghz adapter! It really does make a big difference and you find many more networks and even more networks in PineAP. I would also like to thank the Hak5 forums for where i found the code snippets that needed changing, this saved me a ton of time with grep.
+
+I hope it makes more sense with pictures, but if you have any questions, please contact me
+
+Thank you for reading
+
+~ Source
+https://theirsecurity.com/tips-and-best-practice/wifi-pineapple-5ghz/
+```
 
 ## That's all folks.
